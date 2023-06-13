@@ -1,7 +1,7 @@
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QHideEvent, QShortcut, QFont
-from PySide6.QtWidgets import QPlainTextEdit, QHBoxLayout, QLabel
+from PySide6.QtGui import QHideEvent, QShortcut, QFont, QScreen
+from PySide6.QtWidgets import QPlainTextEdit, QHBoxLayout, QLabel, QApplication
 
 from frontend.hotkey_manager import hotkey_manager
 from frontend.windows.base import FramelessWindow
@@ -22,8 +22,8 @@ class SearchWindow(FramelessWindow):
         self.setup_ui()
 
     def hideEvent(self, event: QHideEvent) -> None:
-        """override hideEvent to clear the search window when it is hidden"""
-        self.clear()
+        """override hideEvent to reset the search window when it is hidden"""
+        self.reset()
         super().hideEvent(event)
 
     def show(self):
@@ -39,7 +39,7 @@ class SearchWindow(FramelessWindow):
         hotkey_manager.search_window_hotkey_pressed.connect(self.show)
         self.hide_shortcut.activated.connect(self.hide)
 
-    def clear(self):
+    def reset(self):
         ...
 
     def adjust_height(self):
@@ -60,11 +60,18 @@ class SearchWindow(FramelessWindow):
         self.text_edit.setSizePolicy(policy)
         self.text_edit.document().contentsChanged.connect(self.adjust_height)
 
-        # TODO: set window geometry
+        # set up window geometry
+        # move search window to the center of the screen horizontally and 30% from the top vertically
+        height = self.text_edit.fontMetrics().lineSpacing() + 10 + 2 * self.VERTICAL_MARGIN
+        width = 1000
+        self.setFixedSize(width, height)
+        screen_geometry = QApplication.instance().primaryScreen().size()
+        x = screen_geometry.width() / 2 - width / 2
+        y = screen_geometry.height() * 0.3  # 30% from the top
+        self.move(x, y)
 
+        # set up layout
         self.layout.setContentsMargins(0, self.VERTICAL_MARGIN, 0, self.VERTICAL_MARGIN)
         self.layout.addWidget(self.indicator_label)
         self.layout.addWidget(self.text_edit)
         self.setLayout(self.layout)
-        self.setFixedHeight(self.text_edit.fontMetrics().lineSpacing() + 10 + 2 * self.VERTICAL_MARGIN)
-        self.setFixedWidth(1000)
