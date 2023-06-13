@@ -31,16 +31,25 @@ class SearchWindow(FramelessWindow):
         This is desirable because we can now do some operations like copying the selected text to the clipboard
             before activate the window.
         """
+        self.reset()
         super().show()
         self.activateWindow()
         self.setFocus()
+        if hasattr(self, 'text_edit'):
+            self.text_edit.setFocus()
 
     def connect_hotkey(self):
-        hotkey_manager.search_window_hotkey_pressed.connect(self.show)
+        hotkey_manager.search_window_hotkey_pressed.connect(self.toggle_visibility)
         self.hide_shortcut.activated.connect(self.hide)
 
+    def toggle_visibility(self):
+        if self.isVisible():
+            self.hide()
+        else:
+            self.show()
+
     def reset(self):
-        ...
+        self.text_edit.clear()
 
     def adjust_height(self):
         """Adjust the height of the window to fit the content"""
