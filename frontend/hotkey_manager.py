@@ -4,11 +4,11 @@ All windows accept hotkeys from this manager.
 """
 from typing import List
 
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, Signal, Qt
 from PySide6.QtGui import QShortcut, QKeySequence
 from pynput.keyboard import GlobalHotKeys, Listener
 
-MODIFIER_KEYS = ['ALT', 'CTRL', 'SHIFT', 'ESC']
+MODIFIER_KEYS = ['ALT', 'CTRL', 'SHIFT', 'ESC', 'SPACE']
 
 
 class HotkeyCombination:
@@ -27,14 +27,17 @@ class HotkeyCombination:
         return '+'.join([f'<{key}>' if key in MODIFIER_KEYS else key for key in self.hotkey_seq])
 
     def create_shortcut(self, parent=None) -> QShortcut:
-        return QShortcut(QKeySequence(self.display()), parent)
+        if hasattr(Qt, f"Key_{self.display().capitalize()}"):
+            key_sequence = getattr(Qt, f"Key_{self.display().capitalize()}")
+        else:
+            key_sequence = self.display()
+        return QShortcut(QKeySequence(key_sequence), parent)
 
 
 class HotkeyManager(QObject):
     # activate the search window from any application
     search_window_hotkey = HotkeyCombination(['ALT', 'X'])
-    hide_search_window_hotkey = HotkeyCombination(['ESC'])
-
+    search_window_hide_hotkey = HotkeyCombination(['ESC'])
     search_window_hotkey_pressed = Signal(bool)
 
     global_hotkey_listener: Listener = None
