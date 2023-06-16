@@ -26,11 +26,6 @@ class LLMTrigger(BaseTrigger):
         self.history = []  # history of conversation
         self.temperature = temperature
 
-    def set(self, **kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-        return self
-
 
 class LLMResult(BaseResult):
     def __init__(self, success: bool = True, error_message: str = '', model_name: Model = Model.GPT_3_5_TURBO,
@@ -45,11 +40,6 @@ class LLMResult(BaseResult):
     def cost(self) -> float:
         return self.input_token_usage * MODEL_INFO[self.model_name]['unit_price_input'] + \
             self.output_token_usage * MODEL_INFO[self.model_name]['unit_price_output']
-
-    def set(self, **kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-        return self
 
 
 class LLMAgent(BaseAgent):

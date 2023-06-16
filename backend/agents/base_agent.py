@@ -8,7 +8,7 @@ An agent takes an input (a trigger that activates it), does some preparation,
 check internal state and external environment, takes actions, coordinates subordinate agents, does some clean up,
 and finally returns the result.
 """
-from backend.Error import Error
+from backend.error import Error
 
 
 class BaseTrigger:
@@ -16,12 +16,21 @@ class BaseTrigger:
         """activate an agent"""
         return agent.act(self)
 
+    def set(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        return self
 
 class BaseResult:
     def __init__(self, success: bool = True, error: Error = None, error_message: str = '', ):
         self.success = success
         self.error = error
         self.error_message = error_message
+
+    def set(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        return self
 
 
 class BaseAgent:
