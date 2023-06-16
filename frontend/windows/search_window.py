@@ -6,10 +6,11 @@ from PySide6.QtWidgets import QPlainTextEdit, QHBoxLayout, QLabel, QApplication
 from frontend.hotkey_manager import hotkey_manager
 from frontend.windows.base import FramelessWindow
 from frontend.windows.components.command_text_edit import CommandTextEdit
+from setting.setting_reader import setting
 
 
 class SearchWindow(FramelessWindow):
-    FONT_SIZE = 18
+    FONT_SIZE = setting.get('SEARCH_WINDOW_FONT_SIZE', 18)
     VERTICAL_MARGIN = 10
 
     def __init__(self):
@@ -78,7 +79,7 @@ class SearchWindow(FramelessWindow):
         self.setFixedSize(width, height)
         screen_geometry = QApplication.instance().primaryScreen().size()
         x = screen_geometry.width() / 2 - width / 2
-        y = screen_geometry.height() * 0.3  # 30% from the top
+        y = screen_geometry.height() * setting.get('SEARCH_WINDOW_POSITION_FROM_SCREEN_TOP', 0.3)  # 30% from the top
         self.move(x, y)
 
         # set up layout
