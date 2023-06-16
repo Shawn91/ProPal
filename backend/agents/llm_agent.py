@@ -49,11 +49,11 @@ class LLMAgent(BaseAgent):
 
     RESULT_CLASS = LLMResult
 
-    def do(self, trigger: LLMTrigger, result: LLMResult) -> LLMResult:
-        return self.chat(trigger=trigger, result=result)
-
     def warm_up(self, trigger: LLMTrigger):
         return self.RESULT_CLASS(model_name=trigger.model_name)
+
+    def do(self, trigger: LLMTrigger, result: LLMResult) -> LLMResult:
+        return self.chat(trigger=trigger, result=result)
 
     def chat(self, trigger: LLMTrigger, result: LLMResult) -> LLMResult:
         try:

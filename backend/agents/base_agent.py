@@ -21,6 +21,7 @@ class BaseTrigger:
             setattr(self, key, value)
         return self
 
+
 class BaseResult:
     def __init__(self, success: bool = True, error: Error = None, error_message: str = '', ):
         self.success = success
@@ -36,6 +37,7 @@ class BaseResult:
 class BaseAgent:
     """This base class is more like an abstract example. It is not meant to be used directly."""
     RESULT_CLASS = BaseResult
+
     def warm_up(self, trigger):
         """Do some preparation before taking actions."""
         return self.RESULT_CLASS()
