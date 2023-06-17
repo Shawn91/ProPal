@@ -1,8 +1,11 @@
 from enum import Enum
 
-from PySide6.QtCore import Qt, QTranslator
-from PySide6.QtGui import QKeyEvent
+from PySide6 import QtWidgets
+from PySide6.QtCore import Qt, QTranslator, Signal
+from PySide6.QtGui import QKeyEvent, QFont
 from PySide6.QtWidgets import QPlainTextEdit
+
+from setting.setting_reader import setting
 
 
 class Mode(Enum):
@@ -36,10 +39,28 @@ def is_valid_command(command: str) -> bool:
 
 class CommandTextEdit(QPlainTextEdit):
     """A text edit widget that supports search mode and chat mode."""
+    CHAT_SIGNAL = Signal(str)
+
+    FONT_SIZE = setting.get('SEARCH_WINDOW_FONT_SIZE', 18)
+    PADDING = 10  # distance in pixels between border to edit area
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.mode = None
         self.set_mode(Mode.SEARCH)
+
+        self.setup_ui()
+
+    def setup_ui(self):
+        font = QFont()
+        font.setPointSize(self.FONT_SIZE)
+        self.setFont(font)
+        policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.setSizePolicy(policy)
+        self.setStyleSheet(f"""
+            padding: {self.PADDING}px; 
+            background-color:white;
+            """)
 
     def set_mode(self, mode: Mode):
         self.mode = mode
@@ -64,5 +85,10 @@ class CommandTextEdit(QPlainTextEdit):
                 return
             if self.mode == Mode.SEARCH and text.startswith("/"):
                 self.set_mode(Mode.SEARCH)
+                return
+        elif event.key() == Qt.Key_Return:
+            if self.mode == Mode.CHAT:
+                self.CHAT_SIGNAL.emit(text)
+                self.clear()
                 return
         super().keyPressEvent(event)

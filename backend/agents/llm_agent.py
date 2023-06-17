@@ -67,8 +67,8 @@ class LLMAgent(BaseAgent):
                               error_message=f'Connection to {MODEL_INFO[trigger.model_name]} API failed')
         except Exception as e:
             return result.set(success=False, error=Error.UNKNOWN, error_message=str(e))
-        return result.set(text=res.choices[0].text, input_token_usage=res.usage.prompt_tokens,
-                          output_token_usage=res.usage.completion_token)
+        return result.set(text=res.choices[0].message.content, input_token_usage=res.usage.prompt_tokens,
+                          output_token_usage=res.usage.completion_tokens)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,10 @@
+import sys
+from pathlib import Path
+
 from PySide6.QtWidgets import QApplication
+
+if str(Path(__file__).parent.parent.resolve()) not in sys.path:
+    sys.path.append(str(Path(__file__).parent.parent.resolve()))
 
 from frontend.hotkey_manager import HotkeyManager
 from frontend.windows.search_window import SearchWindow

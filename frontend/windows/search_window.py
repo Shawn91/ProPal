@@ -1,8 +1,9 @@
-from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QHideEvent, QShortcut, QFont
-from PySide6.QtWidgets import QPlainTextEdit, QHBoxLayout, QLabel, QApplication
+from PySide6.QtGui import QHideEvent, QShortcut
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QApplication, QWidget, QVBoxLayout
 
+from backend.agents.agent_coordinator import LLMCoordinator
+from frontend.components.short_text_viewer import ShortTextViewer
 from frontend.hotkey_manager import hotkey_manager
 from frontend.windows.base import FramelessWindow
 from frontend.windows.components.command_text_edit import CommandTextEdit
@@ -10,19 +11,23 @@ from setting.setting_reader import setting
 
 
 class SearchWindow(FramelessWindow):
-    FONT_SIZE = setting.get('SEARCH_WINDOW_FONT_SIZE', 18)
-    VERTICAL_MARGIN = 10
+    WIDTH = 1000  # width of the window
 
     def __init__(self):
         super().__init__()
-        self.setWindowFlags(self.windowFlags() | Qt.Tool)
         self.hide_shortcut: QShortcut = hotkey_manager.search_window_hide_hotkey.create_shortcut(parent=self)
-        self.layout = QHBoxLayout()
-        self.text_edit: QPlainTextEdit = CommandTextEdit()
+
+        # create child widgets
+        self.text_edit = CommandTextEdit()
         self.indicator_label = QLabel()
+        self.input_container = QWidget()  # contains text edit and indicator label
+        self.result_container = QWidget()  # contains search result, ai response, etc.
+
+        self.llm_coordinator = LLMCoordinator()
 
         self.setup_ui()
         self.connect_hotkey()
+        self.connect_signals()
 
     def hideEvent(self, event: QHideEvent) -> None:
         """override hideEvent to reset the search window when it is hidden"""
@@ -46,6 +51,10 @@ class SearchWindow(FramelessWindow):
         hotkey_manager.search_window_hotkey_pressed.connect(self.toggle_visibility)
         self.hide_shortcut.activated.connect(self.hide)
 
+    def connect_signals(self):
+        self.text_edit.CHAT_SIGNAL.connect(self.chat)
+        self.text_edit.textChanged.connect(self.adjust_input_height)
+
     def toggle_visibility(self):
         if self.isVisible():
             self.hide()
@@ -55,35 +64,50 @@ class SearchWindow(FramelessWindow):
     def reset(self):
         self.text_edit.clear()
 
-    def adjust_height(self):
-        """Adjust the height of the window to fit the content"""
+    def adjust_input_height(self):
+        """Adjust the height of the input text edit to fit the content"""
         # get number of lines in the text edit
         line_count = self.text_edit.document().lineCount()
+        if line_count > 10:
+            line_count = 10
         # get the height of one line
         line_height = self.text_edit.fontMetrics().lineSpacing()
         window_height = line_count * line_height
-        self.setFixedHeight(window_height + 10 + 2 * self.VERTICAL_MARGIN)
+        self.input_container.setFixedHeight(window_height + 10 + 2 * self.text_edit.PADDING)
 
     def setup_ui(self):
-        # set up the text edit
-        font = QFont()
-        font.setPointSize(self.FONT_SIZE)
-        self.text_edit.setFont(font)
-        policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        self.text_edit.setSizePolicy(policy)
+        # set up the ui of whole window
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setWindowFlags(self.windowFlags() | Qt.Tool)
 
-        # set up window geometry
-        # move search window to the center of the screen horizontally and 30% from the top vertically
-        height = self.text_edit.fontMetrics().lineSpacing() + 10 + 2 * self.VERTICAL_MARGIN
-        width = 1000
-        self.setFixedSize(width, height)
+        # set up input window geometry
+        # move input window to the center of the screen horizontally and 30% from the top vertically
+        height = self.text_edit.fontMetrics().lineSpacing() + 10 + 2 * self.text_edit.PADDING
+        self.input_container.setFixedSize(self.WIDTH, height)
         screen_geometry = QApplication.instance().primaryScreen().size()
-        x = screen_geometry.width() / 2 - width / 2
+        x = screen_geometry.width() / 2 - self.WIDTH / 2
         y = screen_geometry.height() * setting.get('SEARCH_WINDOW_POSITION_FROM_SCREEN_TOP', 0.3)  # 30% from the top
         self.move(x, y)
 
         # set up layout
-        self.layout.setContentsMargins(0, self.VERTICAL_MARGIN, 0, self.VERTICAL_MARGIN)
-        self.layout.addWidget(self.indicator_label)
-        self.layout.addWidget(self.text_edit)
-        self.setLayout(self.layout)
+        input_layout = QHBoxLayout()
+        input_layout.addWidget(self.indicator_label)
+        input_layout.addWidget(self.text_edit)
+        input_layout.setContentsMargins(0, 0, 0, 0)
+        self.input_container.setLayout(input_layout)
+
+        global_layout = QVBoxLayout()
+        global_layout.setContentsMargins(0, 0, 0, 0)
+        global_layout.addWidget(self.input_container)
+        global_layout.addWidget(self.result_container)
+
+        self.setLayout(global_layout)
+
+        self.setFixedWidth(self.WIDTH)
+
+    def chat(self, user_input: str):
+        result = self.llm_coordinator.coordinate(user_input=user_input)
+        text_viewer = ShortTextViewer(text=result.text, text_format='markdown')
+        layout = QVBoxLayout()
+        layout.addWidget(text_viewer)
+        self.result_container.setLayout(layout)
