@@ -41,7 +41,7 @@ class CommandTextEdit(QPlainTextEdit):
     """A text edit widget that supports search mode and chat mode."""
     CHAT_SIGNAL = Signal(str)
 
-    FONT_SIZE = setting.get('SEARCH_WINDOW_FONT_SIZE', 18)
+    FONT_SIZE = setting.get('FONT_SIZE')
     PADDING = 10  # distance in pixels between border to edit area
 
     def __init__(self, parent=None):
@@ -89,6 +89,5 @@ class CommandTextEdit(QPlainTextEdit):
         elif event.key() == Qt.Key_Return:
             if self.mode == Mode.CHAT:
                 self.CHAT_SIGNAL.emit(text)
-                self.clear()
                 return
         super().keyPressEvent(event)

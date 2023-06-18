@@ -12,6 +12,7 @@ pyside6 = "^6.5.0"
 tomli = "^2.0.1"
 openai = "^0.27.8"
 markdown = "^3.4.3"
+pygments = "^2.15.1"
 
 
 [[tool.poetry.source]]

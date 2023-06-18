@@ -22,7 +22,6 @@ class SearchWindow(FramelessWindow):
         self.indicator_label = QLabel()
         self.input_container = QWidget()  # contains text edit and indicator label
         self.result_container = QWidget()  # contains search result, ai response, etc.
-
         self.llm_coordinator = LLMCoordinator()
 
         self.setup_ui()
@@ -96,11 +95,13 @@ class SearchWindow(FramelessWindow):
         input_layout.setContentsMargins(0, 0, 0, 0)
         self.input_container.setLayout(input_layout)
 
+        output_layout = QVBoxLayout()
+        self.result_container.setLayout(output_layout)
+
         global_layout = QVBoxLayout()
         global_layout.setContentsMargins(0, 0, 0, 0)
         global_layout.addWidget(self.input_container)
         global_layout.addWidget(self.result_container)
-
         self.setLayout(global_layout)
 
         self.setFixedWidth(self.WIDTH)
@@ -108,6 +109,8 @@ class SearchWindow(FramelessWindow):
     def chat(self, user_input: str):
         result = self.llm_coordinator.coordinate(user_input=user_input)
         text_viewer = ShortTextViewer(text=result.text, text_format='markdown')
-        layout = QVBoxLayout()
-        layout.addWidget(text_viewer)
-        self.result_container.setLayout(layout)
+        if self.result_container.layout().count() > 0:
+            existed_widget = self.result_container.layout().takeAt(0).widget()
+            self.result_container.layout().replaceWidget(existed_widget, text_viewer)
+        else:
+            self.result_container.layout().addWidget(text_viewer)
