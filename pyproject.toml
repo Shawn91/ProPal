@@ -13,6 +13,7 @@ tomli = "^2.0.1"
 openai = "^0.27.8"
 markdown = "^3.4.3"
 pygments = "^2.15.1"
+peewee = "^3.16.2"
 
 
 [[tool.poetry.source]]

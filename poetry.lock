@@ -559,6 +559,22 @@ url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 reference = "QingHua"
 
 [[package]]
+name = "peewee"
+version = "3.16.2"
+description = "a little orm"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "peewee-3.16.2.tar.gz", hash = "sha256:10769981198c7311f84a0ca8db892fa213303a8eb1305deb795a71e7bd606a91"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+reference = "QingHua"
+
+[[package]]
 name = "pygments"
 version = "2.15.1"
 description = "Pygments is a syntax highlighting package written in Python."
@@ -1024,4 +1040,4 @@ reference = "QingHua"
 [metadata]
 lock-version = "2.0"
 python-versions = "<3.12,>=3.10"
-content-hash = "609a390a943c4d6c16a8a17aa752029dc0de54097221522539f08db50842f07f"
+content-hash = "7dcb92b72e27b80dabd86a8b3861df08925c47c844fd6de7fd43ce6e37f930a0"
