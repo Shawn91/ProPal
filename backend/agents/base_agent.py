@@ -8,10 +8,14 @@ An agent takes an input (a trigger that activates it), does some preparation,
 check internal state and external environment, takes actions, coordinates subordinate agents, does some clean up,
 and finally returns the result.
 """
+from typing import Dict, Optional
 from backend.error import Error
 
 
 class BaseTrigger:
+    def __init__(self, content):
+        self.content = content
+
     def activate(self, agent: 'BaseAgent'):
         """activate an agent"""
         return agent.act(self)
@@ -23,7 +27,10 @@ class BaseTrigger:
 
 
 class BaseResult:
-    def __init__(self, success: bool = True, error: Error = None, error_message: str = '', ):
+    def __init__(self, trigger: Optional[BaseTrigger] = None, content = None, 
+                 success: bool = True, error: Error = None, error_message: str = ''):
+        self.trigger = trigger
+        self.content = content
         self.success = success
         self.error = error
         self.error_message = error_message
@@ -32,15 +39,17 @@ class BaseResult:
         for key, value in kwargs.items():
             setattr(self, key, value)
         return self
-
+    
 
 class BaseAgent:
     """This base class is more like an abstract example. It is not meant to be used directly."""
+    TRIGGER_CLASS = BaseTrigger
     RESULT_CLASS = BaseResult
 
-    def warm_up(self, trigger):
+    def warm_up(self, trigger_attrs: Dict):
         """Do some preparation before taking actions."""
-        return self.RESULT_CLASS()
+        trigger = self.TRIGGER_CLASS(**trigger_attrs)
+        return trigger, self.RESULT_CLASS(trigger=trigger)
 
     def introspect(self, trigger, result):
         """check internal states"""
@@ -61,8 +70,8 @@ class BaseAgent:
         """Do some clean up after taking actions, like logging, etc."""
         return result
 
-    def act(self, trigger: BaseTrigger):
-        result = self.warm_up(trigger)
+    def act(self, trigger_attrs: Dict):
+        trigger, result = self.warm_up(trigger_attrs=trigger_attrs)
         result = self.introspect(trigger, result)
         result = self.explore(trigger, result)
         result = self.do(trigger, result)

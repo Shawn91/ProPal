@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Optional
 
 from backend.agents.base_agent import BaseAgent, BaseTrigger, BaseResult
 from backend.error import Error
@@ -19,8 +20,8 @@ MODEL_INFO = {
 
 
 class LLMTrigger(BaseTrigger):
-    def __init__(self, text: str, model_name=Model.GPT_3_5_TURBO, conversation_id: str = '', temperature: float = 0.5):
-        self.text = text  # input to model
+    def __init__(self, content: str = '', model_name=Model.GPT_3_5_TURBO, conversation_id: str = '', temperature: float = 0.5):
+        super().__init__(content=content)  # input to model
         self.model_name = model_name
         self.conversation_id = conversation_id
         self.history = []  # history of conversation
@@ -28,11 +29,9 @@ class LLMTrigger(BaseTrigger):
 
 
 class LLMResult(BaseResult):
-    def __init__(self, success: bool = True, error_message: str = '', model_name: Model = Model.GPT_3_5_TURBO,
-                 text: str = ''):
-        super().__init__(success=success, error_message=error_message)
-        self.model_name = model_name
-        self.text = text  # output from model
+    def __init__(self, trigger: Optional[LLMTrigger] = None, content: str = '', 
+                 success: bool = True, error: Error = None, error_message: str = ''):
+        super().__init__(trigger=trigger, content=content, success=success, error=error, error_message=error_message)
         self.input_token_usage = 0
         self.output_token_usage = 0
 
@@ -47,10 +46,8 @@ class LLMAgent(BaseAgent):
     openai.api_key = setting.get("OPENAI_API_KEY")
     openai.proxy = setting.get('PROXY')
 
+    TRIGGER_CLASS = LLMTrigger
     RESULT_CLASS = LLMResult
-
-    def warm_up(self, trigger: LLMTrigger):
-        return self.RESULT_CLASS(model_name=trigger.model_name)
 
     def do(self, trigger: LLMTrigger, result: LLMResult) -> LLMResult:
         return self.chat(trigger=trigger, result=result)
@@ -59,7 +56,7 @@ class LLMAgent(BaseAgent):
         try:
             res = self.openai.ChatCompletion.create(
                 model=trigger.model_name,
-                messages=trigger.history + [{'role': 'user', "content": trigger.text}],
+                messages=trigger.history + [{'role': 'user', "content": trigger.content}],
                 temperature=trigger.temperature,
             )
         except self.openai.error.APIConnectionError:
@@ -67,11 +64,11 @@ class LLMAgent(BaseAgent):
                               error_message=f'Connection to {MODEL_INFO[trigger.model_name]} API failed')
         except Exception as e:
             return result.set(success=False, error=Error.UNKNOWN, error_message=str(e))
-        return result.set(text=res.choices[0].message.content, input_token_usage=res.usage.prompt_tokens,
+        return result.set(content=res.choices[0].message.content, input_token_usage=res.usage.prompt_tokens,
                           output_token_usage=res.usage.completion_tokens)
 
 
 if __name__ == "__main__":
     agent = LLMAgent()
-    trigger = LLMTrigger(text="Hello, how are you?")
+    trigger = LLMTrigger(content="Hello, how are you?")
     print(agent.chat(trigger=trigger, result=LLMResult()))
