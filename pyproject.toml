@@ -2,18 +2,20 @@
 name = "propal"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = ["Shawn Zhu"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "<3.12,>=3.10"
 pynput = "^1.7.6"
-pyside6 = "^6.5.0"
+# pyside6 is set  to be <6.5.0 as per requirements of pyside6-fluent-widgets
+pyside6 = "<6.5.0"
 tomli = "^2.0.1"
 openai = "^0.27.8"
 markdown = "^3.4.3"
 pygments = "^2.15.1"
 peewee = "^3.16.2"
+pyside6-fluent-widgets = "^0.9.5"
 
 
 [[tool.poetry.source]]

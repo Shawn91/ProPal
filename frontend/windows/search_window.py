@@ -1,12 +1,13 @@
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QHideEvent, QShortcut
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QApplication, QWidget, QVBoxLayout
+from qframelesswindow import FramelessWindow
 
 from backend.agents.agent_coordinator import LLMCoordinator
 from frontend.components.short_text_viewer import ShortTextViewer
 from frontend.hotkey_manager import hotkey_manager
-from frontend.windows.base import FramelessWindow
-from frontend.windows.components.command_text_edit import CommandTextEdit
+# from frontend.windows.base import FramelessWindow
+from frontend.components.command_text_edit import CommandTextEdit
 from setting.setting_reader import setting
 
 

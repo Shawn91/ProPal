@@ -3,7 +3,7 @@ from enum import Enum
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt, QTranslator, Signal
 from PySide6.QtGui import QKeyEvent, QFont
-from PySide6.QtWidgets import QPlainTextEdit
+from qfluentwidgets import PlainTextEdit
 
 from setting.setting_reader import setting
 
@@ -37,7 +37,7 @@ def is_valid_command(command: str) -> bool:
     return SearchSetting.has_value(command) or SearchType.has_value(command)
 
 
-class CommandTextEdit(QPlainTextEdit):
+class CommandTextEdit(PlainTextEdit):
     """A text edit widget that supports search mode and chat mode."""
     CHAT_SIGNAL = Signal(str)
 
