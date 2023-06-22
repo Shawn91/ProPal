@@ -1,40 +1,45 @@
 from typing import Dict, List
+
 from PySide6.QtWidgets import QTreeWidgetItem, QListWidgetItem, QLabel, QWidget, QHBoxLayout, QListWidget
+from PySide6.QtCore import Qt
 from qfluentwidgets import TreeWidget, ListWidget
-
-from backend.tools.database import Prompt
-
-
-# TODO: replace the parent of SearchResultList to list view and use this ListItem to customize ui
-class ListItem(QWidget):
-    def __init__(self, data: List[str]):
-        super().__init__()
-        self.data = data
-        self.setup_ui()
-
-    def setup_ui(self):
-        layout = QHBoxLayout()
-        for item in self.data:
-            label = QLabel(item)
-            layout.addWidget(label)
-        self.setLayout(layout)
 
 
 class SearchResultList(ListWidget):
-    def __init__(self, data: Dict, parent=None):
-        """data is a dict returned by retriever agent result with slight modification"""
+    # TODO: replace the parent of SearchResultList to list view and use custom ListItem to customize ui
+    def __init__(self, matches: List[Dict], search_str: str = "", parent=None):
+        """
+        matches is a list of dicts returned by retriever agent result.
+            Each element is in the format of {"type": "prompt", "data": Prompt(), "match_fields": ["content", "tag"]}
+        """
         super().__init__(parent=parent)
         self.setup_ui()
-        self.data = data
+        self.matches = matches
+        self.search_str = search_str
         self.load_list_items()
 
     def setup_ui(self):
         self.setStyleSheet("background-color:white;")
 
+    def sort_matches(self, matches: List[Dict]):
+        # TODO: sort matches
+        return matches
+
     def load_list_items(self):
-        # prompt_match is in the format of [{"data": Prompt(), "match_type": ["content", "tag"]}]
-        for prompt_match in self.data.get("prompt", []):
-            prompt = prompt_match["data"]
-            QListWidgetItem("\t" + "Prompt" + "\t" + prompt.content + "\t" + ", ".join(prompt.tag_list), self)
+        for match in self.sort_matches(self.matches):
+            object = match.get("data", None)
+            text = "\t" + match["type"].capitalize() + "\t" + object.content
+            if hasattr(object, "tag_list") and object.tag_list:
+                text += "\t" + ", ".join(object.tag_list)
+            item = QListWidgetItem(text, self)
+            item.setData(Qt.UserRole, match)  # store the match info in the item
+
+        talk_to_ai_item = QListWidgetItem("\t" + "Talk to AI" + "\t" + self.search_str)
+        talk_to_ai_item.setData(Qt.UserRole, {"type": "talk_to_ai", "data": self.search_str})
+        if len(self.search_str) > 5:
+            self.insertItem(0, talk_to_ai_item)
+        else:
+            self.addItem(talk_to_ai_item)
+
         self.setCurrentRow(0)
         self.setFixedHeight(self.sizeHintForRow(0) * self.count() + 2 * self.frameWidth())

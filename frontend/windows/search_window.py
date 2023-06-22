@@ -1,4 +1,5 @@
 from typing import Optional
+
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QHideEvent, QShortcut
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QApplication, QWidget, QVBoxLayout
@@ -137,10 +138,11 @@ class SearchWindow(FramelessWindow):
         self.set_widget_in_result_container(text_viewer)
 
     def search(self):
-        if self.text_edit.toPlainText() == "":
+        text = self.text_edit.toPlainText()
+        if text == "":
             self.set_widget_in_result_container(widget=None)
             return
-        result = self.retriver_agent.act(trigger_attrs={"content": self.text_edit.toPlainText()})
-        search_result_list = SearchResultList(data=result.content)
+        result = self.retriver_agent.act(trigger_attrs={"content": text})
+        search_result_list = SearchResultList(matches=result.content, search_str=text)
         self.set_widget_in_result_container(search_result_list)
         return result

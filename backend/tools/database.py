@@ -53,13 +53,13 @@ class Prompt(pw.Model, ModelWithTags):
         tag_matches: List["Prompt"] = list(cls.select().where(cls.tags.contains(search_str)))
         matches = []
         for content_match in content_matches:
-            match_info = {"match_type": ["content"], "data": content_match}
+            match_info = {"match_fields": ["content"], "data": content_match}
             if content_match in tag_matches:
-                match_info["match_type"].append("tag")
+                match_info["match_fields"].append("tag")
                 tag_matches.remove(content_match)
             matches.append(match_info)
         for tag_match in tag_matches:
-            match_info = {"match_type": ["tag"], "data": tag_match}
+            match_info = {"match_fields": ["tag"], "data": tag_match}
             matches.append(match_info)
         return matches
 
@@ -87,15 +87,15 @@ class DBManager:
         """only create tables once"""
         db.create_tables([Prompt])
 
-    def search_by_string(self, search_str, in_models: Optional[List[str]] = None) -> Dict[str, List[Dict]]:
+    def search_by_string(self, search_str, in_models: Optional[List[str]] = None) -> List[Dict]:
         if in_models is None:
             in_models = []
 
-        result = {}
+        result = []
         for model_name, model_class in self.MODELS.items():
             if in_models and model_class not in in_models:
                 continue
-            result[model_name] = model_class.search_by_string(search_str)
+            result.extend(({"type": model_name, **x} for x in model_class.search_by_string(search_str)))
         return result
 
 
