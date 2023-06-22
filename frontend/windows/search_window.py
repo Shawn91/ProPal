@@ -1,11 +1,15 @@
+from typing import Optional
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QHideEvent, QShortcut
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QApplication, QWidget, QVBoxLayout
 from qframelesswindow import FramelessWindow
 
-from backend.agents.agent_coordinator import LLMCoordinator
+from backend.agents.llm_agent import LLMAgent
+from backend.agents.retriever_agent import RetrieverAgent
+from frontend.components.search_result_list import SearchResultList
 from frontend.components.short_text_viewer import ShortTextViewer
 from frontend.hotkey_manager import hotkey_manager
+
 # from frontend.windows.base import FramelessWindow
 from frontend.components.command_text_edit import CommandTextEdit
 from setting.setting_reader import setting
@@ -23,7 +27,8 @@ class SearchWindow(FramelessWindow):
         self.indicator_label = QLabel()
         self.input_container = QWidget()  # contains text edit and indicator label
         self.result_container = QWidget()  # contains search result, ai response, etc.
-        self.llm_coordinator = LLMCoordinator()
+        self.llm_agent = LLMAgent()
+        self.retriver_agent = RetrieverAgent()
 
         self.setup_ui()
         self.connect_hotkey()
@@ -43,7 +48,7 @@ class SearchWindow(FramelessWindow):
         super().show()
         self.activateWindow()
         self.setFocus()
-        if hasattr(self, 'text_edit'):
+        if hasattr(self, "text_edit"):
             self.text_edit.setFocus()
 
     def connect_hotkey(self):
@@ -54,6 +59,7 @@ class SearchWindow(FramelessWindow):
     def connect_signals(self):
         self.text_edit.CHAT_SIGNAL.connect(self.chat)
         self.text_edit.textChanged.connect(self.adjust_input_height)
+        self.text_edit.textChanged.connect(self.search)
 
     def toggle_visibility(self):
         if self.isVisible():
@@ -78,16 +84,19 @@ class SearchWindow(FramelessWindow):
     def setup_ui(self):
         # set up the ui of whole window
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setWindowFlags(self.windowFlags() | Qt.Tool)
+        self.setWindowFlags(self.windowFlags() | Qt.Tool | Qt.WindowStaysOnTopHint)
 
         # set up input window geometry
         # move input window to the center of the screen horizontally and 30% from the top vertically
-        height = self.text_edit.fontMetrics().lineSpacing() + 10 + 2 * self.text_edit.PADDING
-        self.input_container.setFixedSize(self.WIDTH, height)
+        text_edit_height = self.text_edit.fontMetrics().lineSpacing() + 10 + 2 * self.text_edit.PADDING
+        self.input_container.setFixedSize(self.WIDTH, text_edit_height)
         screen_geometry = QApplication.instance().primaryScreen().size()
         x = screen_geometry.width() / 2 - self.WIDTH / 2
-        y = screen_geometry.height() * setting.get('SEARCH_WINDOW_POSITION_FROM_SCREEN_TOP', 0.3)  # 30% from the top
+        y = screen_geometry.height() * setting.get("SEARCH_WINDOW_POSITION_FROM_SCREEN_TOP", 0.3)  # 30% from the top
         self.move(x, y)
+
+        # set up search result container
+        self.result_container.setMaximumHeight(screen_geometry.height() * 0.5)
 
         # set up layout
         input_layout = QHBoxLayout()
@@ -107,11 +116,31 @@ class SearchWindow(FramelessWindow):
 
         self.setFixedWidth(self.WIDTH)
 
-    def chat(self, user_input: str):
-        result = self.llm_coordinator.coordinate(user_input=user_input)
-        text_viewer = ShortTextViewer(text=result.text, text_format='markdown')
-        if self.result_container.layout().count() > 0:
+    def set_widget_in_result_container(self, widget: Optional[QWidget]):
+        if widget is None:
+            if self.result_container.layout().count() > 0:
+                existed_widget = self.result_container.layout().takeAt(0).widget()
+                existed_widget.deleteLater()
+            self.resize(self.WIDTH, self.input_container.height())
+            return
+        elif self.result_container.layout().count() > 0:
             existed_widget = self.result_container.layout().takeAt(0).widget()
-            self.result_container.layout().replaceWidget(existed_widget, text_viewer)
-        else:
-            self.result_container.layout().addWidget(text_viewer)
+            self.result_container.layout().replaceWidget(existed_widget, widget)
+            existed_widget.deleteLater()
+        elif self.result_container.layout().count() == 0:
+            self.result_container.layout().addWidget(widget)
+        self.resize(self.WIDTH, self.input_container.height() + widget.height() + 10)
+
+    def chat(self, user_input: str):
+        result = self.llm_agent.act(trigger_attrs={"content": user_input})
+        text_viewer = ShortTextViewer(text=result.content, text_format="markdown")
+        self.set_widget_in_result_container(text_viewer)
+
+    def search(self):
+        if self.text_edit.toPlainText() == "":
+            self.set_widget_in_result_container(widget=None)
+            return
+        result = self.retriver_agent.act(trigger_attrs={"content": self.text_edit.toPlainText()})
+        search_result_list = SearchResultList(data=result.content)
+        self.set_widget_in_result_container(search_result_list)
+        return result

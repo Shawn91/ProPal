@@ -16,7 +16,7 @@ class LLMCoordinator(BaseAgentCoordinator):
 
     def coordinate(self, user_input: str, model_name=Model.GPT_3_5_TURBO, conversation_id: str = '',
                    temperature: float = 0.5):
-        llm_trigger = LLMTrigger(text=user_input, model_name=model_name, conversation_id=conversation_id,
+        llm_trigger = LLMTrigger(content=user_input, model_name=model_name, conversation_id=conversation_id,
                                  temperature=temperature)
         llm_agent = self.llm_agent_class()
         llm_result = llm_trigger.activate(llm_agent)
