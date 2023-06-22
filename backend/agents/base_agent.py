@@ -16,7 +16,7 @@ class BaseTrigger:
     def __init__(self, content):
         self.content = content
 
-    def activate(self, agent: 'BaseAgent'):
+    def activate(self, agent: "BaseAgent"):
         """activate an agent"""
         return agent.act(self)
 
@@ -25,10 +25,19 @@ class BaseTrigger:
             setattr(self, key, value)
         return self
 
+    def to_dict(self):
+        raise NotImplementedError
+
 
 class BaseResult:
-    def __init__(self, trigger: Optional[BaseTrigger] = None, content = None, 
-                 success: bool = True, error: Error = None, error_message: str = ''):
+    def __init__(
+        self,
+        trigger: Optional[BaseTrigger] = None,
+        content=None,
+        success: bool = True,
+        error: Error = None,
+        error_message: str = "",
+    ):
         self.trigger = trigger
         self.content = content
         self.success = success
@@ -39,10 +48,14 @@ class BaseResult:
         for key, value in kwargs.items():
             setattr(self, key, value)
         return self
-    
+
+    def to_dict(self):
+        raise NotImplementedError
+
 
 class BaseAgent:
     """This base class is more like an abstract example. It is not meant to be used directly."""
+
     TRIGGER_CLASS = BaseTrigger
     RESULT_CLASS = BaseResult
 
