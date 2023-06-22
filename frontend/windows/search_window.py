@@ -1,7 +1,7 @@
-from typing import Optional
+from typing import Dict, Optional
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QHideEvent, QShortcut
+from PySide6.QtGui import QHideEvent, QShortcut, QFont
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QApplication, QWidget, QVBoxLayout
 from qframelesswindow import FramelessWindow
 
@@ -55,11 +55,10 @@ class SearchWindow(FramelessWindow):
     def connect_hotkey(self):
         # hide or show the window
         hotkey_manager.search_window_hotkey_pressed.connect(self.toggle_visibility)
-        self.hide_shortcut.activated.connect(self.hide)
 
     def connect_signals(self):
-        self.text_edit.CHAT_SIGNAL.connect(self.chat)
-        self.text_edit.textChanged.connect(self.adjust_input_height)
+        self.text_edit.CONFIRM_SIGNAL.connect(self.execute)
+        # self.text_edit.textChanged.connect(self.adjust_input_height)
         self.text_edit.textChanged.connect(self.search)
 
     def toggle_visibility(self):
@@ -71,16 +70,16 @@ class SearchWindow(FramelessWindow):
     def reset(self):
         self.text_edit.clear()
 
-    def adjust_input_height(self):
-        """Adjust the height of the input text edit to fit the content"""
-        # get number of lines in the text edit
-        line_count = self.text_edit.document().lineCount()
-        if line_count > 10:
-            line_count = 10
-        # get the height of one line
-        line_height = self.text_edit.fontMetrics().lineSpacing()
-        window_height = line_count * line_height
-        self.input_container.setFixedHeight(window_height + 10 + 2 * self.text_edit.PADDING)
+    # def adjust_input_height(self):
+    #     """Adjust the height of the input text edit to fit the content"""
+    #     # get number of lines in the text edit
+    #     line_count = self.text_edit.document().lineCount()
+    #     if line_count > 10:
+    #         line_count = 10
+    #     # get the height of one line
+    #     line_height = self.text_edit.fontMetrics().lineSpacing()
+    #     window_height = line_count * line_height
+    #     self.input_container.setFixedHeight(window_height + 10 + 2 * self.text_edit.PADDING)
 
     def setup_ui(self):
         # set up the ui of whole window
@@ -91,6 +90,7 @@ class SearchWindow(FramelessWindow):
         # move input window to the center of the screen horizontally and 30% from the top vertically
         text_edit_height = self.text_edit.fontMetrics().lineSpacing() + 10 + 2 * self.text_edit.PADDING
         self.input_container.setFixedSize(self.WIDTH, text_edit_height)
+
         screen_geometry = QApplication.instance().primaryScreen().size()
         x = screen_geometry.width() / 2 - self.WIDTH / 2
         y = screen_geometry.height() * setting.get("SEARCH_WINDOW_POSITION_FROM_SCREEN_TOP", 0.3)  # 30% from the top
@@ -126,20 +126,29 @@ class SearchWindow(FramelessWindow):
             return
         elif self.result_container.layout().count() > 0:
             existed_widget = self.result_container.layout().takeAt(0).widget()
-            self.result_container.layout().replaceWidget(existed_widget, widget)
             existed_widget.deleteLater()
-        elif self.result_container.layout().count() == 0:
-            self.result_container.layout().addWidget(widget)
-        self.resize(self.WIDTH, self.input_container.height() + widget.height() + 10)
+        self.result_container.layout().addWidget(widget)
+        self.result_container.adjustSize()
 
-    def chat(self, user_input: str):
-        result = self.llm_agent.act(trigger_attrs={"content": user_input})
-        text_viewer = ShortTextViewer(text=result.content, text_format="markdown")
-        self.set_widget_in_result_container(text_viewer)
+        self.resize(self.WIDTH, self.input_container.height() + widget.height() + 10)
+        self.adjustSize()
+
+    def execute(self):
+        text = self.text_edit.toPlainText()
+        if text.strip() == "":
+            return
+        search_result_widget: SearchResultList = self.result_container.layout().itemAt(0).widget()
+        selected_item = search_result_widget.selectedItems()[0]
+        # match example: {'data': Prompt(), 'match_fields': ['content', 'tag'], 'type': 'prompt'}
+        match: Dict = selected_item.data(Qt.UserRole)
+        if match["type"] == "talk_to_ai":
+            llm_result = self.llm_agent.act(trigger_attrs={"content": text})
+            text_viewer = ShortTextViewer(text=llm_result.content, text_format="markdown")
+            self.set_widget_in_result_container(text_viewer)
 
     def search(self):
         text = self.text_edit.toPlainText()
-        if text == "":
+        if text.strip() == "":
             self.set_widget_in_result_container(widget=None)
             return
         result = self.retriver_agent.act(trigger_attrs={"content": text})

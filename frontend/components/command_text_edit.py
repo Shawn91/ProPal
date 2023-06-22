@@ -1,9 +1,10 @@
 from enum import Enum
 
 from PySide6 import QtWidgets
+from PySide6.QtWidgets import QPlainTextEdit
 from PySide6.QtCore import Qt, QTranslator, Signal
 from PySide6.QtGui import QKeyEvent, QFont
-from qfluentwidgets import PlainTextEdit
+from qfluentwidgets import PlainTextEdit, LineEdit
 
 from setting.setting_reader import setting
 
@@ -14,8 +15,8 @@ class Mode(Enum):
 
 
 class SearchSetting(str, Enum):
-    REGEX = '/re'
-    CASE_SENSITIVE = '/cs'
+    REGEX = "/re"
+    CASE_SENSITIVE = "/cs"
 
     @classmethod
     def has_value(cls, value):
@@ -23,9 +24,9 @@ class SearchSetting(str, Enum):
 
 
 class SearchType(str, Enum):
-    PROMPT = '/pr'
-    CHAT_HISTORY = '/ch'
-    FEATURE = '/ft'
+    PROMPT = "/pr"
+    CHAT_HISTORY = "/ch"
+    FEATURE = "/ft"
 
     @classmethod
     def has_value(cls, value):
@@ -39,9 +40,10 @@ def is_valid_command(command: str) -> bool:
 
 class CommandTextEdit(PlainTextEdit):
     """A text edit widget that supports search mode and chat mode."""
-    CHAT_SIGNAL = Signal(str)
 
-    FONT_SIZE = setting.get('FONT_SIZE')
+    CONFIRM_SIGNAL = Signal(str)  # signal emitted when user press enter
+
+    FONT_SIZE = setting.get("FONT_SIZE")
     PADDING = 10  # distance in pixels between border to edit area
 
     def __init__(self, parent=None):
@@ -57,18 +59,25 @@ class CommandTextEdit(PlainTextEdit):
         self.setFont(font)
         policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.setSizePolicy(policy)
-        self.setStyleSheet(f"""
+        self.setStyleSheet(
+            f"""
             padding: {self.PADDING}px; 
             background-color:white;
-            """)
+            """
+        )
+
+        self.setLineWrapMode(QPlainTextEdit.NoWrap)  # disable line wrap
+        self.setMaximumBlockCount(1)  # make it a single line edit
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # disable vertical scroll bar
 
     def set_mode(self, mode: Mode):
         self.mode = mode
         if self.mode == Mode.SEARCH:
-            self.setPlaceholderText(QTranslator.tr(
-                "Type to search for prompts or chat histories. Press SPACE to start chatting.",
-                type(self).__name__
-            ))
+            self.setPlaceholderText(
+                QTranslator.tr(
+                    "Type to search for prompts or chat histories. Press SPACE to start chatting.", type(self).__name__
+                )
+            )
             self.viewport().repaint()
         elif self.mode == Mode.CHAT:
             self.setPlaceholderText(QTranslator.tr("Type to chat with AI.", type(self).__name__))
@@ -77,17 +86,9 @@ class CommandTextEdit(PlainTextEdit):
     def keyPressEvent(self, event: QKeyEvent) -> None:
         """when user types SPACE, try to recognize the command. Otherwise, pass the event to the base class."""
         text = self.toPlainText()
-
-        if event.key() == Qt.Key_Space:
-            # start chatting when user types SPACE in the empty text edit
-            if text == "":
-                self.set_mode(Mode.CHAT)
+        if event.key() == Qt.Key_Return:
+            if not text.strip():
                 return
-            if self.mode == Mode.SEARCH and text.startswith("/"):
-                self.set_mode(Mode.SEARCH)
-                return
-        elif event.key() == Qt.Key_Return:
-            if self.mode == Mode.CHAT:
-                self.CHAT_SIGNAL.emit(text)
-                return
+            self.CONFIRM_SIGNAL.emit(text)
+            return
         super().keyPressEvent(event)
