@@ -38,11 +38,11 @@ class SearchResultList(ListWidget):
         font.setPointSize(setting.get("FONT_SIZE"))
 
         for match in self.sort_matches(self.matches):
-            object = match.get("data", None)
-            if object and hasattr(object, "content") and isinstance(object.content, str):
-                text = "\t" + match["type"].capitalize() + "\t" + object.content
-                if hasattr(object, "tag_list") and object.tag_list:
-                    text += "\t" + ", ".join(object.tag_list)
+            obj = match.get("data", None)
+            if obj and hasattr(obj, "content") and isinstance(obj.content, str):
+                text = "\t" + match["type"].capitalize() + "\t" + obj.content
+                if hasattr(obj, "tag_list") and obj.tag_list:
+                    text += "\t" + ", ".join(obj.tag_list)
                 item = QListWidgetItem(text, self)
                 item.setData(Qt.UserRole, match)  # store the match info in the item
                 item.setFont(font)

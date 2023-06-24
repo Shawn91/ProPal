@@ -64,17 +64,6 @@ class StringTemplateFillingDialog(QDialog):
         form_data = self.get_form_data()
         return self.template.substitute(form_data)
 
-    def closeEvent(self, e):
-        print('closeEvent')
-        print(self.result())
-        if self.result() == self.accepted:
-            if self.validate_form():
-                self.TEMPLATE_FILLED_SIGNAL.emit(self.fill_template())
-                return super().closeEvent(e)
-            else:
-                return e.ignore()
-        return super().closeEvent(e)
-
     def accept(self) -> None:
         if self.validate_form():
             self.TEMPLATE_FILLED_SIGNAL.emit(self.fill_template())
