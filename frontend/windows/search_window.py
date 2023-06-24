@@ -1,18 +1,19 @@
-from typing import Dict, Optional
+from typing import Optional, Dict
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QHideEvent, QShortcut, QFont
+from PySide6.QtGui import QHideEvent, QShortcut
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QApplication, QWidget, QVBoxLayout
 from qframelesswindow import FramelessWindow
 
 from backend.agents.llm_agent import LLMAgent
 from backend.agents.retriever_agent import RetrieverAgent
-from frontend.components.search_result_list import SearchResultList
-from frontend.components.short_text_viewer import ShortTextViewer
-from frontend.hotkey_manager import hotkey_manager
-
+from backend.tools.database import Prompt
 # from frontend.windows.base import FramelessWindow
 from frontend.components.command_text_edit import CommandTextEdit
+from frontend.components.search_result_list import SearchResultList
+from frontend.components.short_text_viewer import ShortTextViewer
+from frontend.components.string_template_filling_dialog import StringTemplateFillingDialog
+from frontend.hotkey_manager import hotkey_manager
 from setting.setting_reader import setting
 
 
@@ -28,8 +29,9 @@ class SearchWindow(FramelessWindow):
         self.indicator_label = QLabel()
         self.input_container = QWidget()  # contains text edit and indicator label
         self.result_container = QWidget()  # contains search result, ai response, etc.
+        self.search_result_list = SearchResultList()
         self.llm_agent = LLMAgent()
-        self.retriver_agent = RetrieverAgent()
+        self.retriever_agent = RetrieverAgent()
 
         self.setup_ui()
         self.connect_hotkey()
@@ -57,7 +59,7 @@ class SearchWindow(FramelessWindow):
         hotkey_manager.search_window_hotkey_pressed.connect(self.toggle_visibility)
 
     def connect_signals(self):
-        self.text_edit.CONFIRM_SIGNAL.connect(self.execute)
+        self.text_edit.CONFIRM_SIGNAL.connect(self._execute_search_selection)
         # self.text_edit.textChanged.connect(self.adjust_input_height)
         self.text_edit.textChanged.connect(self.search)
 
@@ -133,25 +135,37 @@ class SearchWindow(FramelessWindow):
         self.resize(self.WIDTH, self.input_container.height() + widget.height() + 10)
         self.adjustSize()
 
-    def execute(self):
+    def _execute_search_selection(self):
         text = self.text_edit.toPlainText()
         if text.strip() == "":
             return
-        search_result_widget: SearchResultList = self.result_container.layout().itemAt(0).widget()
-        selected_item = search_result_widget.selectedItems()[0]
-        # match example: {'data': Prompt(), 'match_fields': ['content', 'tag'], 'type': 'prompt'}
+        selected_item = self.search_result_list.selectedItems()[0]
+        # match examples:
+        # 1. {'data': Prompt(), 'match_fields': ['content', 'tag'], 'type': 'prompt'}
+        # 2. {'type': 'talk_to_ai'}  # no prompt
         match: Dict = selected_item.data(Qt.UserRole)
         if match["type"] == "talk_to_ai":
-            llm_result = self.llm_agent.act(trigger_attrs={"content": text})
-            text_viewer = ShortTextViewer(text=llm_result.content, text_format="markdown")
-            self.set_widget_in_result_container(text_viewer)
+            self._talk_to_ai(prompt=match.get("data"))
+        elif match["type"] == "prompt":
+            prompt: Prompt = match["data"]
+            if prompt.content_template.is_template:
+                dialog = StringTemplateFillingDialog(template=prompt.content_template, parent=self)
+                # dialog.TEMPLATE_FILLED_SIGNAL.connect()
+                dialog.exec()
+
+    def _talk_to_ai(self, prompt: Optional[Prompt] = None):
+        text = self.text_edit.toPlainText()
+        llm_result = self.llm_agent.act(trigger_attrs={"user_input": text, "prompt": prompt})
+        text_viewer = ShortTextViewer(text=llm_result.content, text_format="markdown")
+        self.set_widget_in_result_container(text_viewer)
 
     def search(self):
         text = self.text_edit.toPlainText()
         if text.strip() == "":
             self.set_widget_in_result_container(widget=None)
             return
-        result = self.retriver_agent.act(trigger_attrs={"content": text})
+        result = self.retriever_agent.act(trigger_attrs={"content": text})
+        self.search_result_list.load_list_items(matches=result.content, search_str=text)
         search_result_list = SearchResultList(matches=result.content, search_str=text)
         self.set_widget_in_result_container(search_result_list)
         return result

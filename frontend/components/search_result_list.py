@@ -1,25 +1,26 @@
 from typing import Dict, List
 
-from PySide6.QtWidgets import QTreeWidgetItem, QListWidgetItem, QLabel, QWidget, QHBoxLayout, QListWidget
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTranslator
 from PySide6.QtGui import QFont
-from qfluentwidgets import TreeWidget, ListWidget
+from PySide6.QtWidgets import QListWidgetItem
+from qfluentwidgets import ListWidget
 
 from setting.setting_reader import setting
 
 
 class SearchResultList(ListWidget):
     # TODO: replace the parent of SearchResultList to list view and use custom ListItem to customize ui
-    def __init__(self, matches: List[Dict], search_str: str = "", parent=None):
+    def __init__(self, matches: List[Dict] = None, search_str: str = "", parent=None):
         """
         matches is a list of dicts returned by retriever agent result.
-            Each element is in the format of {"type": "prompt", "data": Prompt(), "match_fields": ["content", "tag"]}
+            Each element is in the form of {"type": "prompt", "data": Prompt(), "match_fields": ["content", "tag"]}
         """
         super().__init__(parent=parent)
-        self.setup_ui()
-        self.matches = matches
+        self.matches = matches if matches else []
         self.search_str = search_str
-        self.load_list_items()
+        self.setup_ui()
+        if matches:
+            self.load_list_items(matches=self.matches, search_str=self.search_str)
 
     def setup_ui(self):
         self.setStyleSheet("background-color:white;")
@@ -28,7 +29,11 @@ class SearchResultList(ListWidget):
         # TODO: sort matches
         return matches
 
-    def load_list_items(self):
+    def load_list_items(self, matches: List[Dict], search_str: str):
+        self.clear()
+        self.matches = matches
+        self.search_str = search_str
+
         font = QFont()
         font.setPointSize(setting.get("FONT_SIZE"))
 
@@ -42,8 +47,8 @@ class SearchResultList(ListWidget):
                 item.setData(Qt.UserRole, match)  # store the match info in the item
                 item.setFont(font)
 
-        talk_to_ai_item = QListWidgetItem("\t" + self.tr("Talk to AI") + "\t" + self.search_str)
-        talk_to_ai_item.setData(Qt.UserRole, {"type": "talk_to_ai", "data": self.search_str})
+        talk_to_ai_item = QListWidgetItem("\t" + QTranslator.tr("Talk to AI") + "\t" + self.search_str)
+        talk_to_ai_item.setData(Qt.UserRole, {"type": "talk_to_ai"})
         talk_to_ai_item.setFont(font)
         if len(self.search_str) > 5:
             self.insertItem(0, talk_to_ai_item)
