@@ -1,4 +1,5 @@
 from typing import List, Optional
+
 from backend.agents.base_agent import BaseAgent, BaseResult, BaseTrigger
 from backend.tools.database import db_manager
 

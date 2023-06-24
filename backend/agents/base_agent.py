@@ -35,7 +35,7 @@ class BaseResult:
         trigger: Optional[BaseTrigger] = None,
         content=None,
         success: bool = True,
-        error: Error = None,
+        error: Optional[Error] = None,
         error_message: str = "",
     ):
         self.trigger = trigger

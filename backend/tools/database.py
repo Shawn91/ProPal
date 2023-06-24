@@ -74,6 +74,10 @@ class Prompt(pw.Model, ModelWithTags):
     def identifier_positions_list(self):
         return [[int(p) for p in pos.split(",")] for pos in self.identifier_positions.split(";")]
 
+    @property
+    def content_template(self) -> StringTemplate:
+        return StringTemplate(self.content)
+
     def save(self, **kwargs):
         self.identifier_positions = self.calculate_identifier_positions_string()
         return super().save(**kwargs)

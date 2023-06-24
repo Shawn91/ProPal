@@ -23,6 +23,7 @@ name = "QingHua"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
 default = true
 
+
 [tool.black]
 line-length = 120
 

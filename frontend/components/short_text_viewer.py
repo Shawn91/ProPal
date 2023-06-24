@@ -9,25 +9,28 @@ class ShortTextViewer(QLabel):
     """A label that shows a short rich/plain text.
     If source text is markdown, it will be converted to html and shown.
     """
+
     markdown_parser = MarkdownParser(custom_style=f'div, p {{font-size: {setting.get("FONT_SIZE")}px}}')
 
-    def __init__(self, text: str = '', text_format='markdown', parent=None):
+    def __init__(self, text: str = "", text_format="markdown", parent=None):
         super().__init__(parent=parent)
         self.setup_ui()
 
-        self.text_format = ''
-        self.text = ''
+        self.text_format = ""
+        self.text = ""
         self.set_text(text=text, text_format=text_format)
 
     def setup_ui(self):
         self.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.setCursor(Qt.IBeamCursor)
         self.setWordWrap(True)
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             QLabel {background-color: white;}
-        """)
+        """
+        )
 
-    def set_text(self, text: str, text_format='markdown'):
+    def set_text(self, text: str, text_format="markdown"):
         self.text = text
         self.text_format = text_format
         if text_format == "markdown":
