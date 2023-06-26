@@ -10,6 +10,10 @@ from setting.setting_reader import setting
 
 class SearchResultList(ListWidget):
     # TODO: replace the parent of SearchResultList to list view and use custom ListItem to customize ui
+
+    FONT = QFont()
+    FONT.setPointSize(setting.get("FONT_SIZE"))
+
     def __init__(self, matches: List[Dict] = None, search_str: str = "", parent=None):
         """
         matches is a list of dicts returned by retriever agent result.
@@ -39,9 +43,6 @@ class SearchResultList(ListWidget):
         self.matches = matches
         self.search_str = search_str
 
-        font = QFont()
-        font.setPointSize(setting.get("FONT_SIZE"))
-
         for match in self.sort_matches(self.matches):
             obj = match.get("data", None)
             if obj and hasattr(obj, "content") and isinstance(obj.content, str):
@@ -50,15 +51,14 @@ class SearchResultList(ListWidget):
                     text += "\t" + ", ".join(obj.tag_list)
                 item = QListWidgetItem(text, self)
                 item.setData(Qt.UserRole, match)  # store the match info in the item
-                item.setFont(font)
+                item.setFont(self.FONT)
 
         talk_to_ai_item = QListWidgetItem("\t" + QTranslator.tr("Talk to AI") + "\t" + self.search_str)
         talk_to_ai_item.setData(Qt.UserRole, {"type": "talk_to_ai"})
-        talk_to_ai_item.setFont(font)
+        talk_to_ai_item.setFont(self.FONT)
         if len(self.search_str) > 5:
             self.insertItem(0, talk_to_ai_item)
         else:
             self.addItem(talk_to_ai_item)
-
         self.setCurrentRow(0)
         self.setFixedHeight(self.sizeHintForRow(0) * self.count() + 2 * self.frameWidth())

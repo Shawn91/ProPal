@@ -36,8 +36,6 @@ class SearchWindow(FramelessWindow):
         self.indicator_label = QLabel()
         self.input_container = QWidget()  # contains text edit and indicator label
         self.result_container = QWidget()  # contains search result, ai response, etc.
-        # temporary data to hold the result of the search for later use
-        self.temp_data: Optional[SearchWindow.TempData] = None
         self.llm_agent = LLMAgent()
         self.retriever_agent = RetrieverAgent()
 
@@ -85,7 +83,6 @@ class SearchWindow(FramelessWindow):
             self.show()
 
     def reset_widget(self):
-        self.temp_data = None
         self.text_edit.reset_widget()
         if self.result_widget and hasattr(self.result_widget, "reset_widget"):
             self.result_widget.reset_widget()
@@ -98,7 +95,6 @@ class SearchWindow(FramelessWindow):
         # set up input window geometry
         # move input window to the center of the screen horizontally and 30% from the top vertically
         self.input_container.setFixedSize(self.WIDTH, self.text_edit.height_by_content + 10)
-        self.input_container.setStyleSheet("background-color: black;")
 
         screen_geometry = QApplication.instance().primaryScreen().size()
         x = screen_geometry.width() / 2 - self.WIDTH / 2
@@ -110,7 +106,7 @@ class SearchWindow(FramelessWindow):
 
         # set up layout
         input_layout = QHBoxLayout()
-        # input_layout.addWidget(self.indicator_label)
+        input_layout.addWidget(self.indicator_label)
         self.indicator_label.hide()
         input_layout.addWidget(self.text_edit)
         input_layout.setContentsMargins(0, 0, 0, 0)
@@ -132,21 +128,21 @@ class SearchWindow(FramelessWindow):
         self.input_container.setFixedHeight(self.text_edit.height_by_content + 10)
 
     def set_widget_in_result_container(self, widget: Optional[QWidget]):
-        if widget is None:
-            if self.result_container.layout().count() > 0:
-                self.result_widget.deleteLater()
-            self.resize(self.WIDTH, self.input_container.height())
-            return
-        elif self.result_container.layout().count() > 0:
-            self.result_widget.deleteLater()
-        self.result_container.layout().addWidget(widget)
-        self.result_container.adjustSize()
-
-        self.resize(self.WIDTH, self.input_container.height() + widget.height() + 10)
+        if widget:
+            if self.result_widget:
+                existed_item = self.result_container.layout().replaceWidget(self.result_widget, widget)
+                existed_widget = existed_item.widget()
+                existed_widget.deleteLater()
+            else:
+                self.result_container.layout().addWidget(widget)
+        else:
+            if self.result_widget:
+                existed_item = self.result_container.layout().takeAt(0)
+                existed_widget = existed_item.widget()
+                existed_widget.deleteLater()
         self.adjustSize()
 
     def _execute_search_selection(self):
-        self.temp_data = None
         text = self.text_edit.toPlainText()
         if text.strip() == "":
             return
@@ -156,7 +152,7 @@ class SearchWindow(FramelessWindow):
         # 2. {'type': 'talk_to_ai'}  # no prompt
         match: Dict = selected_item.data(Qt.UserRole)
         if match["type"] == "talk_to_ai":
-            self._talk_to_ai(prompt=match.get("data"))
+            self._talk_to_ai()
         elif match["type"] == "prompt":
             prompt: Prompt = match["data"]
             if prompt.content_template.is_template:
@@ -166,8 +162,7 @@ class SearchWindow(FramelessWindow):
                 )
                 dialog.exec()
 
-    def _wait_for_talking_to_ai(self, prompt: str, data: "TempData" = None):
-        # self._set_temp_widget(data)
+    def _wait_for_talking_to_ai(self, prompt: str):
         self.text_edit.enter_talk_mode()
         self.text_edit.setPlainText(prompt + "\n")
         # move cursor to the end
@@ -175,19 +170,7 @@ class SearchWindow(FramelessWindow):
         cursor.movePosition(QTextCursor.End)
         self.text_edit.setTextCursor(cursor)
 
-    def _set_temp_widget(self, data: "TempData"):
-        self.temp_data = data
-        widget: Optional[QWidget] = None
-        if data.type == "text":
-            widget = ShortTextViewer(text=data.data, text_format=data.type)
-
-        if not widget:
-            raise ValueError(f"Unknown type: {data.type}")
-        self.set_widget_in_result_container(widget)
-
-    def _talk_to_ai(self, prompt: str = ""):
-        # if not prompt and self.temp_data and self.temp_data.source == "prompt":
-        #     prompt = self.temp_data.data
+    def _talk_to_ai(self):
         text = self.text_edit.toPlainText()
         llm_result = self.llm_agent.act(trigger_attrs={"user_input": text})
         text_viewer = ShortTextViewer(text=llm_result.content, text_format="markdown")
