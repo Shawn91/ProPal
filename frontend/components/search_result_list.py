@@ -25,12 +25,17 @@ class SearchResultList(ListWidget):
     def setup_ui(self):
         self.setStyleSheet("background-color:white;")
 
+    def reset_widget(self) -> None:
+        self.clear()
+        self.matches = []
+        self.search_str = ""
+
     def sort_matches(self, matches: List[Dict]):
         # TODO: sort matches
         return matches
 
     def load_list_items(self, matches: List[Dict], search_str: str):
-        self.clear()
+        self.reset_widget()
         self.matches = matches
         self.search_str = search_str
 

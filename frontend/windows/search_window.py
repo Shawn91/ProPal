@@ -1,7 +1,8 @@
-from typing import Optional, Dict
+from dataclasses import dataclass
+from typing import Optional, Dict, Any, Literal, Union
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QHideEvent, QShortcut
+from PySide6.QtGui import QHideEvent, QShortcut, QTextCursor
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QApplication, QWidget, QVBoxLayout
 from qframelesswindow import FramelessWindow
 
@@ -20,6 +21,12 @@ from setting.setting_reader import setting
 class SearchWindow(FramelessWindow):
     WIDTH = 1000  # width of the window
 
+    @dataclass
+    class TempData:
+        type: Literal["text", "image"]  # text, image, file, etc
+        data: Any  # text, image binary, file path, etc
+        source: str  # source of the data, e.g. "prompt", "clipboard", "user_input", etc
+
     def __init__(self):
         super().__init__()
         self.hide_shortcut: QShortcut = hotkey_manager.search_window_hide_hotkey.create_shortcut(parent=self)
@@ -29,7 +36,8 @@ class SearchWindow(FramelessWindow):
         self.indicator_label = QLabel()
         self.input_container = QWidget()  # contains text edit and indicator label
         self.result_container = QWidget()  # contains search result, ai response, etc.
-        self.search_result_list = SearchResultList()
+        # temporary data to hold the result of the search for later use
+        self.temp_data: Optional[SearchWindow.TempData] = None
         self.llm_agent = LLMAgent()
         self.retriever_agent = RetrieverAgent()
 
@@ -37,9 +45,16 @@ class SearchWindow(FramelessWindow):
         self.connect_hotkey()
         self.connect_signals()
 
+    @property
+    def result_widget(self) -> Optional[Union[SearchResultList, ShortTextViewer]]:
+        """return the widget inside the result container"""
+        if self.result_container.layout().count() > 0:
+            return self.result_container.layout().itemAt(0).widget()
+        return None
+
     def hideEvent(self, event: QHideEvent) -> None:
         """override hideEvent to reset the search window when it is hidden"""
-        self.reset()
+        self.reset_widget()
         super().hideEvent(event)
 
     def show(self):
@@ -47,21 +62,21 @@ class SearchWindow(FramelessWindow):
         This is desirable because we can now do some operations like copying the selected text to the clipboard
             before activate the window.
         """
-        self.reset()
+        self.reset_widget()
         super().show()
         self.activateWindow()
         self.setFocus()
-        if hasattr(self, "text_edit"):
-            self.text_edit.setFocus()
+        self.text_edit.setFocus()
 
     def connect_hotkey(self):
         # hide or show the window
         hotkey_manager.search_window_hotkey_pressed.connect(self.toggle_visibility)
 
     def connect_signals(self):
-        self.text_edit.CONFIRM_SIGNAL.connect(self._execute_search_selection)
-        # self.text_edit.textChanged.connect(self.adjust_input_height)
+        self.text_edit.CONFIRM_SEARCH_SIGNAL.connect(self._execute_search_selection)
+        self.text_edit.CONFIRM_TALK_SIGNAL.connect(self._talk_to_ai)
         self.text_edit.textChanged.connect(self.search)
+        self.text_edit.textChanged.connect(self._adjust_height)
 
     def toggle_visibility(self):
         if self.isVisible():
@@ -69,19 +84,11 @@ class SearchWindow(FramelessWindow):
         else:
             self.show()
 
-    def reset(self):
-        self.text_edit.clear()
-
-    # def adjust_input_height(self):
-    #     """Adjust the height of the input text edit to fit the content"""
-    #     # get number of lines in the text edit
-    #     line_count = self.text_edit.document().lineCount()
-    #     if line_count > 10:
-    #         line_count = 10
-    #     # get the height of one line
-    #     line_height = self.text_edit.fontMetrics().lineSpacing()
-    #     window_height = line_count * line_height
-    #     self.input_container.setFixedHeight(window_height + 10 + 2 * self.text_edit.PADDING)
+    def reset_widget(self):
+        self.temp_data = None
+        self.text_edit.reset_widget()
+        if self.result_widget and hasattr(self.result_widget, "reset_widget"):
+            self.result_widget.reset_widget()
 
     def setup_ui(self):
         # set up the ui of whole window
@@ -90,8 +97,8 @@ class SearchWindow(FramelessWindow):
 
         # set up input window geometry
         # move input window to the center of the screen horizontally and 30% from the top vertically
-        text_edit_height = self.text_edit.fontMetrics().lineSpacing() + 10 + 2 * self.text_edit.PADDING
-        self.input_container.setFixedSize(self.WIDTH, text_edit_height)
+        self.input_container.setFixedSize(self.WIDTH, self.text_edit.height_by_content + 10)
+        self.input_container.setStyleSheet("background-color: black;")
 
         screen_geometry = QApplication.instance().primaryScreen().size()
         x = screen_geometry.width() / 2 - self.WIDTH / 2
@@ -103,7 +110,8 @@ class SearchWindow(FramelessWindow):
 
         # set up layout
         input_layout = QHBoxLayout()
-        input_layout.addWidget(self.indicator_label)
+        # input_layout.addWidget(self.indicator_label)
+        self.indicator_label.hide()
         input_layout.addWidget(self.text_edit)
         input_layout.setContentsMargins(0, 0, 0, 0)
         self.input_container.setLayout(input_layout)
@@ -119,16 +127,18 @@ class SearchWindow(FramelessWindow):
 
         self.setFixedWidth(self.WIDTH)
 
+    def _adjust_height(self):
+        """adjust the height of the window to fit the content"""
+        self.input_container.setFixedHeight(self.text_edit.height_by_content + 10)
+
     def set_widget_in_result_container(self, widget: Optional[QWidget]):
         if widget is None:
             if self.result_container.layout().count() > 0:
-                existed_widget = self.result_container.layout().takeAt(0).widget()
-                existed_widget.deleteLater()
+                self.result_widget.deleteLater()
             self.resize(self.WIDTH, self.input_container.height())
             return
         elif self.result_container.layout().count() > 0:
-            existed_widget = self.result_container.layout().takeAt(0).widget()
-            existed_widget.deleteLater()
+            self.result_widget.deleteLater()
         self.result_container.layout().addWidget(widget)
         self.result_container.adjustSize()
 
@@ -136,10 +146,11 @@ class SearchWindow(FramelessWindow):
         self.adjustSize()
 
     def _execute_search_selection(self):
+        self.temp_data = None
         text = self.text_edit.toPlainText()
         if text.strip() == "":
             return
-        selected_item = self.search_result_list.selectedItems()[0]
+        selected_item = self.result_widget.selectedItems()[0]
         # match examples:
         # 1. {'data': Prompt(), 'match_fields': ['content', 'tag'], 'type': 'prompt'}
         # 2. {'type': 'talk_to_ai'}  # no prompt
@@ -150,12 +161,35 @@ class SearchWindow(FramelessWindow):
             prompt: Prompt = match["data"]
             if prompt.content_template.is_template:
                 dialog = StringTemplateFillingDialog(template=prompt.content_template, parent=self)
-                # dialog.TEMPLATE_FILLED_SIGNAL.connect()
+                dialog.TEMPLATE_FILLED_SIGNAL.connect(
+                    self._wait_for_talking_to_ai
+                )
                 dialog.exec()
 
-    def _talk_to_ai(self, prompt: Optional[Prompt] = None):
+    def _wait_for_talking_to_ai(self, prompt: str, data: "TempData" = None):
+        # self._set_temp_widget(data)
+        self.text_edit.enter_talk_mode()
+        self.text_edit.setPlainText(prompt + "\n")
+        # move cursor to the end
+        cursor = self.text_edit.textCursor()
+        cursor.movePosition(QTextCursor.End)
+        self.text_edit.setTextCursor(cursor)
+
+    def _set_temp_widget(self, data: "TempData"):
+        self.temp_data = data
+        widget: Optional[QWidget] = None
+        if data.type == "text":
+            widget = ShortTextViewer(text=data.data, text_format=data.type)
+
+        if not widget:
+            raise ValueError(f"Unknown type: {data.type}")
+        self.set_widget_in_result_container(widget)
+
+    def _talk_to_ai(self, prompt: str = ""):
+        # if not prompt and self.temp_data and self.temp_data.source == "prompt":
+        #     prompt = self.temp_data.data
         text = self.text_edit.toPlainText()
-        llm_result = self.llm_agent.act(trigger_attrs={"user_input": text, "prompt": prompt})
+        llm_result = self.llm_agent.act(trigger_attrs={"user_input": text})
         text_viewer = ShortTextViewer(text=llm_result.content, text_format="markdown")
         self.set_widget_in_result_container(text_viewer)
 
@@ -165,7 +199,7 @@ class SearchWindow(FramelessWindow):
             self.set_widget_in_result_container(widget=None)
             return
         result = self.retriever_agent.act(trigger_attrs={"content": text})
-        self.search_result_list.load_list_items(matches=result.content, search_str=text)
-        search_result_list = SearchResultList(matches=result.content, search_str=text)
+        search_result_list = SearchResultList()
+        search_result_list.load_list_items(matches=result.content, search_str=text)
         self.set_widget_in_result_container(search_result_list)
         return result

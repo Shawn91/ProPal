@@ -1,17 +1,16 @@
 from enum import Enum
 
 from PySide6 import QtWidgets
-from PySide6.QtWidgets import QPlainTextEdit
 from PySide6.QtCore import Qt, QTranslator, Signal
 from PySide6.QtGui import QKeyEvent, QFont
-from qfluentwidgets import PlainTextEdit, LineEdit
+from qfluentwidgets import PlainTextEdit
 
 from setting.setting_reader import setting
 
 
 class Mode(Enum):
     SEARCH = 0
-    CHAT = 1
+    TALK = 1
 
 
 class SearchSetting(str, Enum):
@@ -41,7 +40,8 @@ def is_valid_command(command: str) -> bool:
 class CommandTextEdit(PlainTextEdit):
     """A text edit widget that supports search mode and chat mode."""
 
-    CONFIRM_SIGNAL = Signal(str)  # signal emitted when user press enter
+    CONFIRM_SEARCH_SIGNAL = Signal(str)  # signal emitted when user press enter
+    CONFIRM_TALK_SIGNAL = Signal(str)
 
     FONT_SIZE = setting.get("FONT_SIZE")
     PADDING = 10  # distance in pixels between border to edit area
@@ -52,6 +52,15 @@ class CommandTextEdit(PlainTextEdit):
         self.set_mode(Mode.SEARCH)
 
         self.setup_ui()
+
+    @property
+    def height_by_content(self):
+        """return the height of the widget in pixels
+        NOTE: PlainTextEdit.document().size().height() returns line number, not the actual height of the widget.
+            TextEdit.document().size().height() returns the actual height of the widget.
+        """
+        line_count = 1 if self.document().lineCount() == 0 else self.document().lineCount()
+        return self.fontMetrics().lineSpacing() * line_count + self.PADDING * 2
 
     def setup_ui(self):
         font = QFont()
@@ -66,29 +75,53 @@ class CommandTextEdit(PlainTextEdit):
             """
         )
 
-        self.setLineWrapMode(QPlainTextEdit.NoWrap)  # disable line wrap
-        self.setMaximumBlockCount(1)  # make it a single line edit
+        # self.setLineWrapMode(QPlainTextEdit.NoWrap)  # disable line wrap
+        # self.setMaximumBlockCount(5)  # make it a single line edit
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # disable vertical scroll bar
+
+    def reset_widget(self):
+        self.clear()
+        self.enter_search_mode()
 
     def set_mode(self, mode: Mode):
         self.mode = mode
+        self.clear()
         if self.mode == Mode.SEARCH:
             self.setPlaceholderText(
                 QTranslator.tr(
-                    "Type to search for prompts or chat histories. Press SPACE to start chatting.", type(self).__name__
+                    "Type to search for prompts, chat histories or applications, or start talking to AI.",
                 )
             )
             self.viewport().repaint()
-        elif self.mode == Mode.CHAT:
-            self.setPlaceholderText(QTranslator.tr("Type to chat with AI.", type(self).__name__))
+        elif self.mode == Mode.TALK:
+            self.setPlaceholderText(QTranslator.tr("Type to talk to AI.", type(self).__name__))
             self.viewport().repaint()
+
+    def enter_talk_mode(self):
+        self.set_mode(Mode.TALK)
+
+    def enter_search_mode(self):
+        self.set_mode(Mode.SEARCH)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         """when user types SPACE, try to recognize the command. Otherwise, pass the event to the base class."""
         text = self.toPlainText()
-        if event.key() == Qt.Key_Return:
+        enter_pressed = event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return
+        if enter_pressed and event.modifiers() == Qt.ShiftModifier:
+            self.insertPlainText("\n")
+            return
+        elif enter_pressed:
             if not text.strip():
                 return
-            self.CONFIRM_SIGNAL.emit(text)
+            if self.mode == Mode.SEARCH:
+                self.CONFIRM_SEARCH_SIGNAL.emit(text)
+            elif self.mode == Mode.TALK:
+                self.CONFIRM_TALK_SIGNAL.emit(text)
             return
+
         super().keyPressEvent(event)
+
+    def _adjust_height(self):
+        """adjust height to fit the content"""
+        self.setMinimumHeight(self.fontMetrics().lineSpacing() * self.document().blockCount() + 10 + self.PADDING * 2)
+        self.adjustSize()

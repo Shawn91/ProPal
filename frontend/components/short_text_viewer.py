@@ -1,4 +1,5 @@
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QLabel
 
 from backend.tools.markdown_parser import MarkdownParser
@@ -11,6 +12,8 @@ class ShortTextViewer(QLabel):
     """
 
     markdown_parser = MarkdownParser(custom_style=f'div, p {{font-size: {setting.get("FONT_SIZE")}px}}')
+    FONT = QFont()
+    FONT.setPointSize(setting.get("FONT_SIZE"))
 
     def __init__(self, text: str = "", text_format="markdown", parent=None):
         super().__init__(parent=parent)
@@ -21,6 +24,7 @@ class ShortTextViewer(QLabel):
         self.set_text(text=text, text_format=text_format)
 
     def setup_ui(self):
+        self.setFont(self.FONT)
         self.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.setCursor(Qt.IBeamCursor)
         self.setWordWrap(True)
