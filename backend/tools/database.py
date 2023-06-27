@@ -1,13 +1,13 @@
+import uuid
 from collections.abc import Sequence
 from datetime import datetime
 from typing import Optional, Dict, List
-import uuid
 
 import peewee as pw
 from playhouse.shortcuts import model_to_dict
+
 from backend.tools.string_template import StringTemplate
 from backend.tools.utils import get_subsequences
-
 from setting.setting_reader import setting
 
 
@@ -46,10 +46,6 @@ class ModelWithTags:
         if not isinstance(tags, str):
             raise TypeError(f"tags must be a string or a sequence of strings, not {type(tags)}")
         return tags
-
-    @property
-    def tag_list(self):
-        return self.tags.split(",")
 
 
 class Prompt(pw.Model, ModelWithTags):

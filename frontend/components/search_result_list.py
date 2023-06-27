@@ -13,6 +13,7 @@ class SearchResultList(ListWidget):
 
     FONT = QFont()
     FONT.setPointSize(setting.get("FONT_SIZE"))
+    FONT.setFamily(setting.get("FONT_FAMILY"))
 
     def __init__(self, matches: List[Dict] = None, search_str: str = "", parent=None):
         """
@@ -46,14 +47,14 @@ class SearchResultList(ListWidget):
         for match in self.sort_matches(self.matches):
             obj = match.get("data", None)
             if obj and hasattr(obj, "content") and isinstance(obj.content, str):
-                text = "\t" + match["type"].capitalize() + "\t" + obj.content
-                if hasattr(obj, "tag_list") and obj.tag_list:
-                    text += "\t" + ", ".join(obj.tag_list)
+                text = "    " + match["type"].capitalize() + "    " + obj.content
+                if hasattr(obj, "tags") and obj.tags:
+                    text += "    " + ", ".join(obj.tags)
                 item = QListWidgetItem(text, self)
                 item.setData(Qt.UserRole, match)  # store the match info in the item
                 item.setFont(self.FONT)
 
-        talk_to_ai_item = QListWidgetItem("\t" + QTranslator.tr("Talk to AI") + "\t" + self.search_str)
+        talk_to_ai_item = QListWidgetItem("    " + QTranslator.tr("Talk to AI") + "    " + self.search_str)
         talk_to_ai_item.setData(Qt.UserRole, {"type": "talk_to_ai"})
         talk_to_ai_item.setFont(self.FONT)
         if len(self.search_str) > 5:
