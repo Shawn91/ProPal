@@ -1,7 +1,6 @@
 from typing import Dict, List
 
 from PySide6.QtCore import Qt, QTranslator
-from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QListWidgetItem
 from qfluentwidgets import ListWidget
 
@@ -10,10 +9,6 @@ from setting.setting_reader import setting
 
 class SearchResultList(ListWidget):
     # TODO: replace the parent of SearchResultList to list view and use custom ListItem to customize ui
-
-    FONT = QFont()
-    FONT.setPointSize(setting.get("FONT_SIZE"))
-    FONT.setFamily(setting.get("FONT_FAMILY"))
 
     def __init__(self, matches: List[Dict] = None, search_str: str = "", parent=None):
         """
@@ -29,6 +24,7 @@ class SearchResultList(ListWidget):
 
     def setup_ui(self):
         self.setStyleSheet("background-color:white;")
+        self.setFont(setting.default_font)
 
     def reset_widget(self) -> None:
         self.clear()

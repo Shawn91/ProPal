@@ -2,7 +2,7 @@ from enum import Enum
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt, QTranslator, Signal
-from PySide6.QtGui import QKeyEvent, QFont
+from PySide6.QtGui import QKeyEvent
 from qfluentwidgets import PlainTextEdit
 
 from setting.setting_reader import setting
@@ -43,7 +43,6 @@ class CommandTextEdit(PlainTextEdit):
     CONFIRM_SEARCH_SIGNAL = Signal(str)  # signal emitted when user press enter
     CONFIRM_TALK_SIGNAL = Signal(str)
 
-    FONT_SIZE = setting.get("FONT_SIZE")
     PADDING = 10  # distance in pixels between border to edit area
 
     def __init__(self, parent=None):
@@ -63,9 +62,7 @@ class CommandTextEdit(PlainTextEdit):
         return self.fontMetrics().lineSpacing() * line_count + self.PADDING * 2
 
     def setup_ui(self):
-        font = QFont()
-        font.setPointSize(self.FONT_SIZE)
-        self.setFont(font)
+        self.setFont(setting.default_font)
         policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.setSizePolicy(policy)
         self.setStyleSheet(
