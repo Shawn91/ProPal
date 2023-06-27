@@ -1,32 +1,24 @@
 from PySide6.QtCore import Signal, QTranslator
-from PySide6.QtWidgets import QVBoxLayout, QFormLayout, QGroupBox, QDialogButtonBox, QDialog
-from qfluentwidgets import PrimaryPushButton, PushButton
+from PySide6.QtWidgets import QFormLayout, QGroupBox
 from qfluentwidgets.components.widgets import LineEdit
 
 from backend.tools.string_template import StringTemplate
+from frontend.widgets.dialog import Dialog
 from frontend.widgets.label import Label
 from setting.setting_reader import setting
 
 
-class StringTemplateFillingDialog(QDialog):
+class StringTemplateFillingDialog(Dialog):
     TEMPLATE_FILLED_SIGNAL = Signal(str)
 
     def __init__(self, template: StringTemplate, parent=None):
-        super().__init__(parent=parent)
         self.template = template
         self.form = QGroupBox()
-        self.confirm_button = PrimaryPushButton(QTranslator.tr("Confirm"))
-        self.cancel_button = PushButton(QTranslator.tr("Cancel"))
-        self.button_box = QDialogButtonBox()
-        self.button_box.addButton(self.confirm_button, QDialogButtonBox.AcceptRole)
-        self.button_box.addButton(self.cancel_button, QDialogButtonBox.RejectRole)
-        self.button_box.accepted.connect(self.accept)
-        self.button_box.rejected.connect(self.reject)
         self.validation_failed_warning = Label(QTranslator.tr("All fields must be filled."))
 
-        self.setup_ui()
+        super().__init__(title=QTranslator.tr("Fill the prompt template"), parent=parent)
 
-    def setup_ui(self):
+    def setup_central_layout(self):
         form_layout = QFormLayout()
         for identifier in self.template.get_identifiers():
             form_layout.addRow(Label(text=identifier), LineEdit())
@@ -35,14 +27,10 @@ class StringTemplateFillingDialog(QDialog):
         self.validation_failed_warning.hide()
         self.validation_failed_warning.setStyleSheet(f"color: {setting.get('SEVERE_WARNING_COLOR')}")
 
-        global_layout = QVBoxLayout()
-        global_layout.addWidget(Label(text=self.template.template))
-        global_layout.addWidget(self.form)
-        global_layout.addWidget(self.validation_failed_warning)
-        global_layout.addWidget(self.button_box)
-        self.setLayout(global_layout)
-
-        self.setWindowTitle(QTranslator.tr("Fill the prompt template"))
+        self.central_layout.addWidget(Label(text=self.template.template))
+        self.central_layout.addWidget(self.form)
+        self.central_layout.addWidget(self.validation_failed_warning)
+        self.central_layout.addWidget(self.button_box)
 
     def get_form_data(self):
         data = {}
@@ -68,3 +56,16 @@ class StringTemplateFillingDialog(QDialog):
         if self.validate_form():
             self.TEMPLATE_FILLED_SIGNAL.emit(self.fill_template())
             super().accept()
+
+
+if __name__ == "__main__":
+    import sys
+    from PySide6.QtWidgets import QApplication
+    from backend.tools.string_template import StringTemplate
+
+    app = QApplication(sys.argv)
+    template = StringTemplate("Hello, ${name}! You are ${age} years old.")
+    dialog = StringTemplateFillingDialog(template)
+    dialog.TEMPLATE_FILLED_SIGNAL.connect(print)
+    dialog.show()
+    sys.exit(app.exec())

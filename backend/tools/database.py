@@ -147,7 +147,7 @@ class DBManager:
         for model_name, model_class in self.MODELS.items():
             if in_models and model_class not in in_models:
                 continue
-            result.extend(({"type": model_name, **x} for x in model_class.search_by_string(search_str)))
+            result.extend(({"category": model_name, **x} for x in model_class.search_by_string(search_str)))
         return result
 
 

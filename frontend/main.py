@@ -7,14 +7,14 @@ if str(Path(__file__).parent.parent.resolve()) not in sys.path:
     sys.path.append(str(Path(__file__).parent.parent.resolve()))
 
 from frontend.hotkey_manager import HotkeyManager
-from frontend.windows.search_window import SearchWindow
+from frontend.windows.command_window import CommandWindow
 
 
 class MyApp(QApplication):
     def __init__(self, argv):
         super().__init__(argv)
         self.hotkey_manager = HotkeyManager()
-        self.search_window: SearchWindow = SearchWindow()
+        self.search_window: CommandWindow = CommandWindow()
         self.search_window.show()
 
 

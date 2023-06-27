@@ -1,15 +1,16 @@
 from dataclasses import dataclass
-from typing import Optional, Dict, Any, Literal, Union
+from typing import Optional, Any, Literal, Union
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QHideEvent, QShortcut, QTextCursor
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QApplication, QWidget, QVBoxLayout
-from frontend.components.search_result_list import SearchResultList
 from qframelesswindow import FramelessWindow
 
 from backend.agents.llm_agent import LLMAgent
-from backend.agents.retriever_agent import RetrieverAgent
+from backend.agents.retriever_agent import RetrieverAgent, Match
 from backend.tools.database import Prompt
+from frontend.commands import Command
+from frontend.components.command_result_list import CommandResultList
 # from frontend.windows.base import FramelessWindow
 from frontend.components.command_text_edit import CommandTextEdit
 from frontend.components.short_text_viewer import ShortTextViewer
@@ -44,7 +45,7 @@ class CommandWindow(FramelessWindow):
         self.connect_signals()
 
     @property
-    def result_widget(self) -> Optional[Union[SearchResultList, ShortTextViewer]]:
+    def result_widget(self) -> Optional[Union[CommandResultList, ShortTextViewer]]:
         """return the widget inside the result container"""
         if self.result_container.layout().count() > 0:
             return self.result_container.layout().itemAt(0).widget()
@@ -147,20 +148,20 @@ class CommandWindow(FramelessWindow):
         if text.strip() == "":
             return
         selected_item = self.result_widget.selectedItems()[0]
-        # match examples:
-        # 1. {'data': Prompt(), 'match_fields': ['content', 'tag'], 'type': 'prompt'}
-        # 2. {'type': 'talk_to_ai'}  # no prompt
-        match: Dict = selected_item.data(Qt.UserRole)
-        if match["type"] == "talk_to_ai":
+        match: Match = selected_item.data(Qt.UserRole)
+        if match.category == "talk_to_ai":
             self._talk_to_ai()
-        elif match["type"] == "prompt":
-            prompt: Prompt = match["data"]
+        elif match.category == "prompt":
+            prompt: Prompt = match.data
             if prompt.content_template.is_template:
                 dialog = StringTemplateFillingDialog(template=prompt.content_template, parent=self)
                 dialog.TEMPLATE_FILLED_SIGNAL.connect(
                     self._wait_for_talking_to_ai
                 )
                 dialog.exec()
+        elif match.category == "command":
+            command: Command = match.data
+            command.execute(parent=self)
 
     def _wait_for_talking_to_ai(self, prompt: str):
         self.text_edit.enter_talk_mode()
@@ -182,7 +183,7 @@ class CommandWindow(FramelessWindow):
             self.set_widget_in_result_container(widget=None)
             return
         result = self.retriever_agent.act(trigger_attrs={"content": text})
-        search_result_list = SearchResultList()
-        search_result_list.load_list_items(matches=result.content, search_str=text)
-        self.set_widget_in_result_container(search_result_list)
+        command_result_list = CommandResultList()
+        command_result_list.load_list_items(matches=result.content, search_str=text)
+        self.set_widget_in_result_container(command_result_list)
         return result

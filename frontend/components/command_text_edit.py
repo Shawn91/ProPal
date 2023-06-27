@@ -13,30 +13,6 @@ class Mode(Enum):
     TALK = 1
 
 
-class SearchSetting(str, Enum):
-    REGEX = "/re"
-    CASE_SENSITIVE = "/cs"
-
-    @classmethod
-    def has_value(cls, value):
-        return value in cls._value2member_map_
-
-
-class SearchType(str, Enum):
-    PROMPT = "/pr"
-    CHAT_HISTORY = "/ch"
-    FEATURE = "/ft"
-
-    @classmethod
-    def has_value(cls, value):
-        return value in cls._value2member_map_
-
-
-def is_valid_command(command: str) -> bool:
-    """check if the command is valid"""
-    return SearchSetting.has_value(command) or SearchType.has_value(command)
-
-
 class CommandTextEdit(PlainTextEdit):
     """A text edit widget that supports search mode and chat mode."""
 
