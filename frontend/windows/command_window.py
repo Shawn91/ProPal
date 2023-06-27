@@ -4,6 +4,7 @@ from typing import Optional, Dict, Any, Literal, Union
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QHideEvent, QShortcut, QTextCursor
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QApplication, QWidget, QVBoxLayout
+from frontend.components.search_result_list import SearchResultList
 from qframelesswindow import FramelessWindow
 
 from backend.agents.llm_agent import LLMAgent
@@ -11,14 +12,13 @@ from backend.agents.retriever_agent import RetrieverAgent
 from backend.tools.database import Prompt
 # from frontend.windows.base import FramelessWindow
 from frontend.components.command_text_edit import CommandTextEdit
-from frontend.components.search_result_list import SearchResultList
 from frontend.components.short_text_viewer import ShortTextViewer
 from frontend.components.string_template_filling_dialog import StringTemplateFillingDialog
 from frontend.hotkey_manager import hotkey_manager
 from setting.setting_reader import setting
 
 
-class SearchWindow(FramelessWindow):
+class CommandWindow(FramelessWindow):
     WIDTH = 1000  # width of the window
 
     @dataclass
@@ -73,7 +73,7 @@ class SearchWindow(FramelessWindow):
     def connect_signals(self):
         self.text_edit.CONFIRM_SEARCH_SIGNAL.connect(self._execute_search_selection)
         self.text_edit.CONFIRM_TALK_SIGNAL.connect(self._talk_to_ai)
-        self.text_edit.textChanged.connect(self.search)
+        self.text_edit.textChanged.connect(self._search)
         self.text_edit.textChanged.connect(self._adjust_height)
 
     def toggle_visibility(self):
@@ -176,7 +176,7 @@ class SearchWindow(FramelessWindow):
         text_viewer = ShortTextViewer(text=llm_result.content, text_format="markdown")
         self.set_widget_in_result_container(text_viewer)
 
-    def search(self):
+    def _search(self):
         text = self.text_edit.toPlainText()
         if text.strip() == "":
             self.set_widget_in_result_container(widget=None)

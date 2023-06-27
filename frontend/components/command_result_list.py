@@ -7,8 +7,8 @@ from qfluentwidgets import ListWidget
 from setting.setting_reader import setting
 
 
-class SearchResultList(ListWidget):
-    # TODO: replace the parent of SearchResultList to list view and use custom ListItem to customize ui
+class CommandResultList(ListWidget):
+    # TODO: replace the parent of CommandResultList to list view and use custom ListItem to customize ui
 
     def __init__(self, matches: List[Dict] = None, search_str: str = "", parent=None):
         """
@@ -48,11 +48,11 @@ class SearchResultList(ListWidget):
                     text += "    " + ", ".join(obj.tags)
                 item = QListWidgetItem(text, self)
                 item.setData(Qt.UserRole, match)  # store the match info in the item
-                item.setFont(self.FONT)
+                item.setFont(setting.default_font)
 
         talk_to_ai_item = QListWidgetItem("    " + QTranslator.tr("Talk to AI") + "    " + self.search_str)
         talk_to_ai_item.setData(Qt.UserRole, {"type": "talk_to_ai"})
-        talk_to_ai_item.setFont(self.FONT)
+        talk_to_ai_item.setFont(setting.default_font)
         if len(self.search_str) > 5:
             self.insertItem(0, talk_to_ai_item)
         else:
