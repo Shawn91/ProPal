@@ -1,11 +1,45 @@
-from typing import List
+from numbers import Number
+from typing import List, Any
 
 from PySide6.QtCore import Qt, QTranslator
 from PySide6.QtWidgets import QListWidgetItem
 from qfluentwidgets import ListWidget
 
-from backend.agents.retriever_agent import Match
+from backend.models import Match
 from setting.setting_reader import setting
+
+
+class TextMatchesSorter:
+    @classmethod
+    def get_shortest_text_value(cls, values: List[Any]) -> str:
+        """get the shortest text of the field that matches the search string"""
+        shortest_value = ''
+        for value in values:
+            if not isinstance(value, str):
+                continue
+            if isinstance(value, list):
+                value = cls.get_shortest_text_value(value)
+            if not shortest_value:
+                shortest_value = value
+            if len(value) < len(shortest_value):
+                shortest_value = value
+        return shortest_value
+
+    @classmethod
+    def score_match(cls, match: Match, search_str: str) -> Number:
+        """score a match by the following rules:
+        1. TODO: if search_str matches the initials of words in match, give a higher score
+        2. the shorter the match text, the higher the score
+        """
+        text = cls.get_shortest_text_value(match.match_fields_values)
+        if not text:
+            return 0
+        return len(search_str) / len(text)
+
+    @classmethod
+    def sort(cls, matches: List[Match], search_str: str) -> List[Match]:
+        """sort matches by their similarity to the search string"""
+        return sorted(matches, key=lambda x: cls.score_match(x, search_str), reverse=True)
 
 
 class CommandResultList(ListWidget):
@@ -32,23 +66,19 @@ class CommandResultList(ListWidget):
         self.matches = []
         self.search_str = ""
 
-    def sort_matches(self, matches: List[Match]):
-        # TODO: sort matches
-        return matches
-
     def load_list_items(self, matches: List[Match], search_str: str):
         self.reset_widget()
         self.matches = matches
         self.search_str = search_str
 
-        for match in self.sort_matches(self.matches):
-            text = ''
+        for match in TextMatchesSorter.sort(matches=self.matches, search_str=search_str):
+            text = ""
             if match.source == "database":
-                text += "    " + match.category.capitalize() + "    " + match.display
+                text += "    " + match.category.capitalize() + "    " + match.data.content
                 if hasattr(match.data, "tags") and match.data.tags:
                     text += "    " + ", ".join(match.data.tags)
             elif match.source == "command":
-                text += "    " + "Command" + "    " + match.display
+                text += "    " + "Command" + "    " + match.data.display_name
             item = QListWidgetItem(text, self)
             item.setData(Qt.UserRole, match)
             item.setFont(setting.default_font)

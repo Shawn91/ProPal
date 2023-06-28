@@ -2,20 +2,21 @@ from typing import List
 
 from PySide6.QtCore import QTranslator
 
+from backend.models import Match
 from frontend.components.new_prompt import NewPromptDialog
 
 
 class Command:
     commands = {}  # key is command name; value is command instance
-    name: str = ''
-    display_name: str = ''
+    name: str = ""
+    display_name: str = ""
 
     def execute(self, **kwargs):
         ...
 
 
 class AddNewPromptCommand(Command):
-    name = 'AddNewPrompt'
+    name = "AddNewPrompt"
     display_name = QTranslator.tr("Add New Prompt")
 
     @staticmethod
@@ -31,9 +32,22 @@ class CommandManager:
         for command in Command.__subclasses__():
             self.commands[command.name] = command()
 
-    def search(self, search_str: str) -> List[Command]:
+    def search(self, search_str: str) -> List[Match]:
         """Search commands by search_str"""
-        return [command for command in self.commands.values() if search_str in command.display_name.lower()]
+        raw_matches = [command for command in self.commands.values() if search_str in command.display_name.lower()]
+        # search for commands with initials matching search_str
+        for command in self.commands.values():
+            if command in raw_matches:
+                continue
+            command_words = command.display_name.lower().split(" ")
+            if len(command_words) < len(search_str):
+                continue
+            if all(
+                    command_word.startswith(search_char) for search_char, command_word in zip(search_str, command_words)
+            ):
+                raw_matches.append(command)
+        return [Match(source="command", category="command", data=x, match_fields=["display_name"],
+                      match_fields_values=[x.display_name]) for x in raw_matches]
 
     @staticmethod
     def execute_command(command: Command, **kwargs):

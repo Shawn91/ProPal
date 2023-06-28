@@ -1,11 +1,12 @@
 import uuid
 from collections.abc import Sequence
 from datetime import datetime
-from typing import Optional, Dict, List
+from typing import Optional, List
 
 import peewee as pw
 from playhouse.shortcuts import model_to_dict
 
+from backend.models import Match
 from backend.tools.string_template import StringTemplate
 from backend.tools.utils import get_subsequences
 from setting.setting_reader import setting
@@ -79,7 +80,7 @@ class Prompt(pw.Model, ModelWithTags):
         return super().save(**kwargs)
 
     @staticmethod
-    def _filter_out_matches_in_identifieres(matches: List["Prompt"], search_str: str) -> List["Prompt"]:
+    def _filter_out_matches_in_identifiers(matches: List["Prompt"], search_str: str) -> List["Prompt"]:
         result = []
         for match in matches:
             if not match.identifier_positions:
@@ -92,21 +93,29 @@ class Prompt(pw.Model, ModelWithTags):
         return result
 
     @classmethod
-    def search_by_string(cls, search_str: str) -> List[Dict]:
-        content_matches: List["Prompt"] = list(cls.select().where(cls.content.contains(search_str)))
-        content_matches = cls._filter_out_matches_in_identifieres(content_matches, search_str)
-        tag_matches: List["Prompt"] = list(cls.select().where(cls.tags.contains(search_str)))
-        tag_matches = cls._filter_out_matches_in_identifieres(tag_matches, search_str)
+    def search_by_string(cls, search_str: str) -> List[Match]:
+        raw_content_matches: List["Prompt"] = list(cls.select().where(cls.content.contains(search_str)))
+        raw_content_matches = cls._filter_out_matches_in_identifiers(raw_content_matches, search_str)
+        raw_tag_matches: List["Prompt"] = list(cls.select().where(cls.tags.contains(search_str)))
         matches = []
-        for content_match in content_matches:
-            match_info = {"match_fields": ["content"], "data": content_match}
-            if content_match in tag_matches:
-                match_info["match_fields"].append("tag")
-                tag_matches.remove(content_match)
-            matches.append(match_info)
-        for tag_match in tag_matches:
-            match_info = {"match_fields": ["tag"], "data": tag_match}
-            matches.append(match_info)
+        for raw_match in raw_content_matches:
+            is_also_tag_match = raw_match in raw_tag_matches
+            match_fields = ['content'] if not is_also_tag_match else ['content', 'tags']
+            if is_also_tag_match:
+                match_fields_values = [raw_match.content, [tag for tag in raw_match.tags if search_str in tag]]
+            else:
+                match_fields_values = [raw_match.content]
+            match = Match(source="database", match_fields=match_fields, data=raw_match, category="prompt",
+                          match_fields_values=match_fields_values)
+            matches.append(match)
+        for raw_match in raw_tag_matches:
+            if raw_match in raw_content_matches:
+                continue
+            match_fields = ['tags']
+            match_fields_values = [[tag for tag in raw_match.tags if search_str in tag]]
+            match = Match(source="database", match_fields=match_fields, data=raw_match, category="prompt",
+                          match_fields_values=match_fields_values)
+            matches.append(match)
         return matches
 
     def calculate_identifier_positions_string(self):
@@ -139,7 +148,7 @@ class DBManager:
         """only create tables once"""
         db.create_tables([Prompt])
 
-    def search_by_string(self, search_str, in_models: Optional[List[str]] = None) -> List[Dict]:
+    def search_by_string(self, search_str, in_models: Optional[List[str]] = None) -> List[Match]:
         if in_models is None:
             in_models = []
 
@@ -147,7 +156,7 @@ class DBManager:
         for model_name, model_class in self.MODELS.items():
             if in_models and model_class not in in_models:
                 continue
-            result.extend(({"category": model_name, **x} for x in model_class.search_by_string(search_str)))
+            result.extend(model_class.search_by_string(search_str))
         return result
 
 
