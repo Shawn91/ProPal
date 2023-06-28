@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Dict, Optional
 
 from backend.agents.base_agent import BaseAgent, BaseTrigger, BaseResult
-from backend.error import Error
+from backend.models import Error
 from setting.setting_reader import setting
 
 

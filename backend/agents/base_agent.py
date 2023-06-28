@@ -9,7 +9,8 @@ check internal state and external environment, takes actions, coordinates subord
 and finally returns the result.
 """
 from typing import Dict, Optional
-from backend.error import Error
+
+from backend.models import Error
 
 
 class BaseTrigger:
@@ -31,12 +32,12 @@ class BaseTrigger:
 
 class BaseResult:
     def __init__(
-        self,
-        trigger: Optional[BaseTrigger] = None,
-        content=None,
-        success: bool = True,
-        error: Optional[Error] = None,
-        error_message: str = "",
+            self,
+            trigger: Optional[BaseTrigger] = None,
+            content=None,
+            success: bool = True,
+            error: Optional[Error] = None,
+            error_message: str = "",
     ):
         self.trigger = trigger
         self.content = content

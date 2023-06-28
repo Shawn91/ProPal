@@ -7,7 +7,8 @@ from PySide6.QtWidgets import QHBoxLayout, QLabel, QApplication, QWidget, QVBoxL
 from qframelesswindow import FramelessWindow
 
 from backend.agents.llm_agent import LLMAgent
-from backend.agents.retriever_agent import RetrieverAgent, Match
+from backend.agents.retriever_agent import RetrieverAgent
+from backend.models import Match
 from backend.tools.database import Prompt
 from frontend.commands import Command
 from frontend.components.command_result_list import CommandResultList
