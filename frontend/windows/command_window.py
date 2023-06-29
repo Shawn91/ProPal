@@ -115,7 +115,7 @@ class CommandWindow(FramelessWindow):
         """adjust the height of the window to fit the content"""
         self.input_container.setFixedHeight(self.text_edit.height_by_content + 10)
 
-    def set_widget_in_result_container(self, widget: Optional[QWidget]):
+    def set_widget_in_result_container(self, widget: Optional[QWidget], allow_horizontal_scrollbar: bool = False):
         if widget:
             if self.result_container.widget():
                 existed_widget = self.result_container.widget()
@@ -125,6 +125,10 @@ class CommandWindow(FramelessWindow):
             result_container_maximum_height = QApplication.instance().primaryScreen().size().height() * 0.5
             self.result_container.setFixedSize(self.WIDTH,
                                                min(widget.sizeHint().height(), result_container_maximum_height))
+            if allow_horizontal_scrollbar and widget.sizeHint().width() > self.WIDTH:
+                self.result_container.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+            else:
+                self.result_container.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         else:
             self.setFixedWidth(self.WIDTH)
             self.result_container.hide()
@@ -162,8 +166,8 @@ class CommandWindow(FramelessWindow):
     def _talk_to_ai(self):
         text = self.text_edit.toPlainText()
         llm_result = self.llm_agent.act(trigger_attrs={"user_input": text})
-        text_viewer = ShortTextViewer(text=llm_result.content, text_format="markdown", fixed_width=self.WIDTH)
-        self.set_widget_in_result_container(text_viewer)
+        text_viewer = ShortTextViewer(text=llm_result.content, text_format="markdown")
+        self.set_widget_in_result_container(text_viewer, allow_horizontal_scrollbar=True)
 
     def _search(self):
         text = self.text_edit.toPlainText()
