@@ -27,7 +27,8 @@ class MarkdownParser:
             code_style = "".join([line for line in f.readlines() if not line.startswith("pre {")])
             code_style += """
                 .codehilite {
-                    margin: 5px 10px;
+                    margin: 5px;
+                    padding: 5px;
                 }
                """
         style = code_style + custom_style

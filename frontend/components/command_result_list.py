@@ -1,7 +1,7 @@
 from numbers import Number
 from typing import List, Any
 
-from PySide6.QtCore import Qt, QTranslator
+from PySide6.QtCore import Qt, QTranslator, QSize
 from PySide6.QtWidgets import QListWidgetItem
 from qfluentwidgets import ListWidget
 
@@ -45,7 +45,7 @@ class TextMatchesSorter:
 class CommandResultList(ListWidget):
     # TODO: replace the parent of CommandResultList to list view and use custom ListItem to customize ui
 
-    def __init__(self, matches: List[Match] = None, search_str: str = "", parent=None):
+    def __init__(self, matches: List[Match] = None, search_str: str = "", width=1000, parent=None):
         """
         matches is a list of dicts returned by retriever agent result.
             Each element is in the form of {"type": "prompt", "data": Prompt(), "match_fields": ["content", "tag"]}
@@ -53,6 +53,7 @@ class CommandResultList(ListWidget):
         super().__init__(parent=parent)
         self.matches = matches if matches else []
         self.search_str = search_str
+        self.fixed_width = width
         self.setup_ui()
         if matches:
             self.load_list_items(matches=self.matches, search_str=self.search_str)
@@ -60,6 +61,11 @@ class CommandResultList(ListWidget):
     def setup_ui(self):
         self.setStyleSheet("background-color:white;")
         self.setFont(setting.default_font)
+
+    def sizeHint(self) -> QSize:
+        """set up proper size of the widget to help parent widget determine its proper size"""
+        height = self.sizeHintForRow(0) * self.count() + 2 * self.frameWidth()
+        return QSize(self.fixed_width, height)
 
     def reset_widget(self) -> None:
         self.clear()
@@ -91,4 +97,3 @@ class CommandResultList(ListWidget):
         else:
             self.addItem(talk_to_ai_item)
         self.setCurrentRow(0)
-        self.setFixedHeight(self.sizeHintForRow(0) * self.count() + 2 * self.frameWidth())

@@ -1,9 +1,8 @@
-from dataclasses import dataclass
-from typing import Optional, Any, Literal, Union
+from typing import Optional
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QHideEvent, QShortcut, QTextCursor
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QApplication, QWidget, QVBoxLayout
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QApplication, QWidget, QVBoxLayout, QScrollArea
 from qframelesswindow import FramelessWindow
 
 from backend.agents.llm_agent import LLMAgent
@@ -23,12 +22,6 @@ from setting.setting_reader import setting
 class CommandWindow(FramelessWindow):
     WIDTH = 1000  # width of the window
 
-    @dataclass
-    class TempData:
-        type: Literal["text", "image"]  # text, image, file, etc
-        data: Any  # text, image binary, file path, etc
-        source: str  # source of the data, e.g. "prompt", "clipboard", "user_input", etc
-
     def __init__(self):
         super().__init__()
         self.hide_shortcut: QShortcut = hotkey_manager.search_window_hide_hotkey.create_shortcut(parent=self)
@@ -37,20 +30,13 @@ class CommandWindow(FramelessWindow):
         self.text_edit = CommandTextEdit()
         self.indicator_label = QLabel()
         self.input_container = QWidget()  # contains text edit and indicator label
-        self.result_container = QWidget()  # contains search result, ai response, etc.
+        self.result_container = QScrollArea()  # contains search result, ai response, etc.
         self.llm_agent = LLMAgent()
         self.retriever_agent = RetrieverAgent()
 
         self.setup_ui()
         self.connect_hotkey()
         self.connect_signals()
-
-    @property
-    def result_widget(self) -> Optional[Union[CommandResultList, ShortTextViewer]]:
-        """return the widget inside the result container"""
-        if self.result_container.layout().count() > 0:
-            return self.result_container.layout().itemAt(0).widget()
-        return None
 
     def hideEvent(self, event: QHideEvent) -> None:
         """override hideEvent to reset the search window when it is hidden"""
@@ -86,8 +72,8 @@ class CommandWindow(FramelessWindow):
 
     def reset_widget(self):
         self.text_edit.reset_widget()
-        if self.result_widget and hasattr(self.result_widget, "reset_widget"):
-            self.result_widget.reset_widget()
+        if self.result_container.widget():
+            self.result_container.widget().reset_widget()
 
     def setup_ui(self):
         # set up the ui of whole window
@@ -104,7 +90,10 @@ class CommandWindow(FramelessWindow):
         self.move(x, y)
 
         # set up search result container
-        self.result_container.setMaximumHeight(screen_geometry.height() * 0.5)
+        self.result_container.hide()
+        self.result_container.setWidgetResizable(True)
+        self.result_container.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.result_container.setFixedWidth(self.WIDTH)
 
         # set up layout
         input_layout = QHBoxLayout()
@@ -113,9 +102,6 @@ class CommandWindow(FramelessWindow):
         input_layout.addWidget(self.text_edit)
         input_layout.setContentsMargins(0, 0, 0, 0)
         self.input_container.setLayout(input_layout)
-
-        output_layout = QVBoxLayout()
-        self.result_container.setLayout(output_layout)
 
         global_layout = QVBoxLayout()
         global_layout.setContentsMargins(0, 0, 0, 0)
@@ -131,16 +117,19 @@ class CommandWindow(FramelessWindow):
 
     def set_widget_in_result_container(self, widget: Optional[QWidget]):
         if widget:
-            if self.result_widget:
-                existed_item = self.result_container.layout().replaceWidget(self.result_widget, widget)
-                existed_widget = existed_item.widget()
+            if self.result_container.widget():
+                existed_widget = self.result_container.widget()
                 existed_widget.deleteLater()
-            else:
-                self.result_container.layout().addWidget(widget)
+            self.result_container.setWidget(widget)
+            self.result_container.show()
+            result_container_maximum_height = QApplication.instance().primaryScreen().size().height() * 0.5
+            self.result_container.setFixedSize(self.WIDTH,
+                                               min(widget.sizeHint().height(), result_container_maximum_height))
         else:
-            if self.result_widget:
-                existed_item = self.result_container.layout().takeAt(0)
-                existed_widget = existed_item.widget()
+            self.setFixedWidth(self.WIDTH)
+            self.result_container.hide()
+            if self.result_container.widget():
+                existed_widget = self.result_container.widget()
                 existed_widget.deleteLater()
         self.adjustSize()
 
@@ -148,7 +137,7 @@ class CommandWindow(FramelessWindow):
         text = self.text_edit.toPlainText()
         if text.strip() == "":
             return
-        selected_item = self.result_widget.selectedItems()[0]
+        selected_item = self.result_container.widget().selectedItems()[0]
         match: Match = selected_item.data(Qt.UserRole)
         if match.category == "talk_to_ai":
             self._talk_to_ai()
@@ -156,9 +145,7 @@ class CommandWindow(FramelessWindow):
             prompt: Prompt = match.data
             if prompt.content_template.is_template:
                 dialog = StringTemplateFillingDialog(template=prompt.content_template, parent=self)
-                dialog.TEMPLATE_FILLED_SIGNAL.connect(
-                    self._wait_for_talking_to_ai
-                )
+                dialog.TEMPLATE_FILLED_SIGNAL.connect(self._wait_for_talking_to_ai)
                 dialog.exec()
         elif match.category == "command":
             command: Command = match.data
@@ -175,7 +162,7 @@ class CommandWindow(FramelessWindow):
     def _talk_to_ai(self):
         text = self.text_edit.toPlainText()
         llm_result = self.llm_agent.act(trigger_attrs={"user_input": text})
-        text_viewer = ShortTextViewer(text=llm_result.content, text_format="markdown")
+        text_viewer = ShortTextViewer(text=llm_result.content, text_format="markdown", fixed_width=self.WIDTH)
         self.set_widget_in_result_container(text_viewer)
 
     def _search(self):
@@ -184,7 +171,7 @@ class CommandWindow(FramelessWindow):
             self.set_widget_in_result_container(widget=None)
             return
         result = self.retriever_agent.act(trigger_attrs={"content": text})
-        command_result_list = CommandResultList()
+        command_result_list = CommandResultList(width=self.WIDTH)
         command_result_list.load_list_items(matches=result.content, search_str=text)
         self.set_widget_in_result_container(command_result_list)
         return result

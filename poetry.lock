@@ -4353,14 +4353,14 @@ reference = "QingHua"
 
 [[package]]
 name = "pyside6-fluent-widgets"
-version = "0.9.7"
+version = "0.9.10"
 description = "A fluent design widgets library based on PySide6"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "PySide6-Fluent-Widgets-0.9.7.tar.gz", hash = "sha256:eea7ab3728324aa8d5d0eb067898910216cafcdb039b83a2d4ebc84b9ed32613"},
-    {file = "PySide6_Fluent_Widgets-0.9.7-py3-none-any.whl", hash = "sha256:db335eb4e9fd82a9e41ab1ab9c1884d53b7a94f0e194da99c8785ca19cc7af40"},
+    {file = "PySide6-Fluent-Widgets-0.9.10.tar.gz", hash = "sha256:cc7a70fb3a4f416f551beafd3b19ca8105509ffec9a8d5570ad9126570944aaf"},
+    {file = "PySide6_Fluent_Widgets-0.9.10-py3-none-any.whl", hash = "sha256:06e7ec47e1c9edf74eb1eafc91e1845cb7f27920542dfa36b2acef888d71a22a"},
 ]
 
 [package.dependencies]

@@ -27,8 +27,9 @@ class ShortTextViewer(QLabel):
         self.setWordWrap(True)
         self.setStyleSheet(
             """
-            QLabel {background-color: white;}
-        """
+                background-color: white;
+                padding: 10px;
+            """
         )
 
     def set_text(self, text: str, text_format="markdown"):
