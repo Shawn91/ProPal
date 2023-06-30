@@ -16,6 +16,7 @@ markdown = "^3.4.3"
 pygments = "^2.15.1"
 peewee = "^3.16.2"
 pyside6-fluent-widgets = "^0.9.5"
+tiktoken = "^0.4.0"
 
 
 [[tool.poetry.source]]
