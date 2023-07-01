@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Optional
 
 from PySide6.QtCore import Qt, QThread, Signal
@@ -17,6 +18,12 @@ from frontend.components.short_text_viewer import ShortTextViewer
 from frontend.components.string_template_filling_dialog import StringTemplateFillingDialog
 from frontend.hotkey_manager import hotkey_manager
 from setting.setting_reader import setting
+
+
+class Mode(Enum):
+    SEARCH = "search"
+    TALK = "talk"
+    LLM_RESPONDING = "llm_responding"
 
 
 class LLMRequestThread(QThread):
@@ -59,6 +66,7 @@ class CommandWindow(FramelessWindow):
 
     def __init__(self):
         super().__init__()
+        self.mode = Mode.SEARCH
         # create child widgets
         self.text_edit = CommandTextEdit()
         self.indicator_label = QLabel()
@@ -96,8 +104,7 @@ class CommandWindow(FramelessWindow):
         switch_mode_hotkey.activated.connect(self._switch_mode)
 
     def connect_signals(self):
-        self.text_edit.CONFIRM_SEARCH_SIGNAL.connect(self._execute_search_selection)
-        self.text_edit.CONFIRM_TALK_SIGNAL.connect(self._talk_to_ai)
+        self.text_edit.CONFIRM_SIGNAL.connect(self._handle_text_edit_confirm)
         self.text_edit.textChanged.connect(self._search)
         self.text_edit.textChanged.connect(self._adjust_height)
         self.llm_thread.content_received.connect(self._update_ai_response)
@@ -107,6 +114,7 @@ class CommandWindow(FramelessWindow):
         if self.isVisible():
             self.hide()
         else:
+            self._switch_mode(to=Mode.SEARCH)
             self.show()
 
     def reset_widget(self):
@@ -150,11 +158,25 @@ class CommandWindow(FramelessWindow):
 
         self.setFixedWidth(self.WIDTH)
 
-    def _switch_mode(self):
-        # stop the llm if it is running
-        if self.llm_thread.isRunning():
-            self.llm_thread.stop_flag = True
-            self.text_edit.setReadOnly(False)
+    def _handle_text_edit_confirm(self):
+        if self.mode == Mode.SEARCH:
+            self._execute_search_selection()
+        elif self.mode == Mode.TALK:
+            self._talk_to_ai()
+
+    def _switch_mode(self, to=None):
+        """when to is None, it means stop doing whatever it is doing in the current mode"""
+        if to:
+            self.mode = to
+            for widget in [self.text_edit, self.result_container.widget()]:
+                if widget and hasattr(widget, f"enter_{to.value}_mode"):
+                    getattr(widget, f"enter_{to.value}_mode")()
+        else:
+            if self.mode == Mode.LLM_RESPONDING:
+                if self.llm_thread.isRunning():
+                    # stop the llm if it is running
+                    self.llm_thread.stop_flag = True
+                    self._switch_mode(to=Mode.TALK)
 
     def _adjust_height(self):
         """adjust the height of the window to fit the content"""
@@ -189,6 +211,7 @@ class CommandWindow(FramelessWindow):
         selected_item = self.result_container.widget().selectedItems()[0]
         match: Match = selected_item.data(Qt.UserRole)
         if match.category == "talk_to_ai":
+            self._switch_mode(to=Mode.TALK)
             self._talk_to_ai()
         elif match.category == "prompt":
             prompt: Prompt = match.data
@@ -201,7 +224,7 @@ class CommandWindow(FramelessWindow):
             command.execute(parent=self)
 
     def _wait_for_talking_to_ai(self, prompt: str):
-        self.text_edit.enter_talk_mode()
+        self._switch_mode(to=Mode.TALK)
         self.text_edit.setPlainText(prompt + "\n")
         # move cursor to the end
         cursor = self.text_edit.textCursor()
@@ -210,10 +233,9 @@ class CommandWindow(FramelessWindow):
 
     def _talk_to_ai(self):
         text = self.text_edit.toPlainText()
-        self.text_edit.setReadOnly(True)
         text_viewer = ShortTextViewer(text="", text_format="markdown")
         self.set_widget_in_result_container(text_viewer, allow_horizontal_scrollbar=True)
-
+        self._switch_mode(to=Mode.LLM_RESPONDING)
         self.llm_thread.user_input = text
         self.llm_thread.start()
 
@@ -235,6 +257,8 @@ class CommandWindow(FramelessWindow):
     def _search(self):
         text = self.text_edit.toPlainText()
         if text.strip() == "":
+            if self.mode != Mode.SEARCH:
+                self._switch_mode(to=Mode.SEARCH)
             self.set_widget_in_result_container(widget=None)
             return
         result = self.retriever_agent.act(trigger_attrs={"content": text})
