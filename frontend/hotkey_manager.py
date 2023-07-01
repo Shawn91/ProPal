@@ -37,8 +37,9 @@ class HotkeyCombination:
 class HotkeyManager(QObject):
     # activate the search window from any application
     search_window_hotkey = HotkeyCombination(['ALT', 'X'])
-    search_window_hide_hotkey = HotkeyCombination(['ESC'])
     search_window_hotkey_pressed = Signal(bool)
+
+    switch_mode_hotkey = HotkeyCombination(['ESC'])
 
     global_hotkey_listener: Listener = None
 

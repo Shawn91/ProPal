@@ -1,7 +1,7 @@
 from typing import Optional
 
 from PySide6.QtCore import Qt, QThread, Signal
-from PySide6.QtGui import QHideEvent, QShortcut, QTextCursor
+from PySide6.QtGui import QHideEvent, QTextCursor
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QApplication, QWidget, QVBoxLayout, QScrollArea
 from qframelesswindow import FramelessWindow
 
@@ -59,8 +59,6 @@ class CommandWindow(FramelessWindow):
 
     def __init__(self):
         super().__init__()
-        self.hide_shortcut: QShortcut = hotkey_manager.search_window_hide_hotkey.create_shortcut(parent=self)
-
         # create child widgets
         self.text_edit = CommandTextEdit()
         self.indicator_label = QLabel()
@@ -94,6 +92,8 @@ class CommandWindow(FramelessWindow):
     def connect_hotkey(self):
         # hide or show the window
         hotkey_manager.search_window_hotkey_pressed.connect(self.toggle_visibility)
+        switch_mode_hotkey = hotkey_manager.switch_mode_hotkey.create_shortcut(parent=self)
+        switch_mode_hotkey.activated.connect(self._switch_mode)
 
     def connect_signals(self):
         self.text_edit.CONFIRM_SEARCH_SIGNAL.connect(self._execute_search_selection)
@@ -149,6 +149,11 @@ class CommandWindow(FramelessWindow):
         self.setLayout(global_layout)
 
         self.setFixedWidth(self.WIDTH)
+
+    def _switch_mode(self):
+        # stop the llm if it is running
+        if self.llm_thread.isRunning():
+            self.llm_thread.stop_flag = True
 
     def _adjust_height(self):
         """adjust the height of the window to fit the content"""
