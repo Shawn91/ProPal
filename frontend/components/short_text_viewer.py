@@ -41,3 +41,6 @@ class ShortTextViewer(QLabel):
         else:
             self.setText(text)
         self.adjustSize()
+
+    def reset_widget(self):
+        self.set_text(text="", text_format="html")

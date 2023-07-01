@@ -71,6 +71,8 @@ class CommandWindow(FramelessWindow):
         self.text_edit = CommandTextEdit()
         self.indicator_label = QLabel()
         self.input_container = QWidget()  # contains text edit and indicator label
+        self.result_list = CommandResultList(width=self.WIDTH)  # contains search result
+        self.text_viewer = ShortTextViewer()  # contains ai response
         self.result_container = QScrollArea()  # contains search result, ai response, etc.
         self.llm_thread = LLMRequestThread(llm_agent=LLMAgent())
         self.retriever_agent = RetrieverAgent()
@@ -105,8 +107,15 @@ class CommandWindow(FramelessWindow):
 
     def connect_signals(self):
         self.text_edit.CONFIRM_SIGNAL.connect(self._handle_text_edit_confirm)
+        self.text_edit.GO_BEYOND_END_OF_DOCUMENT_SIGNAL.connect(
+            lambda: self._move_focus(from_widget=self.text_edit, to_widget=self.result_container)
+        )
         self.text_edit.textChanged.connect(self._search)
         self.text_edit.textChanged.connect(self._adjust_height)
+        self.result_list.GO_BEYOND_START_OF_LIST_SIGNAL.connect(
+            lambda: self._move_focus(from_widget=self.result_list, to_widget=self.text_edit)
+        )
+        self.result_list.itemActivated.connect(self._execute_search_selection)
         self.llm_thread.content_received.connect(self._update_ai_response)
         self.llm_thread.result_received.connect(self._update_ai_response)
 
@@ -119,8 +128,8 @@ class CommandWindow(FramelessWindow):
 
     def reset_widget(self):
         self.text_edit.reset_widget()
-        if self.result_container.widget():
-            self.result_container.widget().reset_widget()
+        self.text_viewer.reset_widget()
+        self.result_list.reset_widget()
 
     def setup_ui(self):
         # set up the ui of whole window
@@ -178,6 +187,14 @@ class CommandWindow(FramelessWindow):
                     self.llm_thread.stop_flag = True
                     self._switch_mode(to=Mode.TALK)
 
+    def _move_focus(self, from_widget: QWidget, to_widget: QWidget):
+        """move focus to the given widget"""
+        from_widget.clearFocus()
+        if isinstance(to_widget, QScrollArea):
+            to_widget = to_widget.widget()
+        if to_widget:
+            to_widget.setFocus()
+
     def _adjust_height(self):
         """adjust the height of the window to fit the content"""
         self.input_container.setFixedHeight(self.text_edit.height_by_content + 10)
@@ -185,8 +202,9 @@ class CommandWindow(FramelessWindow):
     def set_widget_in_result_container(self, widget: Optional[QWidget], allow_horizontal_scrollbar: bool = False):
         if widget:
             if self.result_container.widget():
-                existed_widget = self.result_container.widget()
-                existed_widget.deleteLater()
+                existed_widget = self.result_container.takeWidget()
+                if existed_widget is not widget:
+                    existed_widget.reset_widget()
             self.result_container.setWidget(widget)
             self.result_container.show()
             self.result_container.setFixedSize(
@@ -201,7 +219,7 @@ class CommandWindow(FramelessWindow):
             self.result_container.hide()
             if self.result_container.widget():
                 existed_widget = self.result_container.widget()
-                existed_widget.deleteLater()
+                existed_widget.reset_widget()
         self.adjustSize()
 
     def _execute_search_selection(self):
@@ -233,24 +251,22 @@ class CommandWindow(FramelessWindow):
 
     def _talk_to_ai(self):
         text = self.text_edit.toPlainText()
-        text_viewer = ShortTextViewer(text="", text_format="markdown")
-        self.set_widget_in_result_container(text_viewer, allow_horizontal_scrollbar=True)
+        self.set_widget_in_result_container(self.text_viewer, allow_horizontal_scrollbar=True)
         self._switch_mode(to=Mode.LLM_RESPONDING)
         self.llm_thread.user_input = text
         self.llm_thread.start()
 
     def _update_ai_response(self, response: str | LLMResult):
         if isinstance(response, str):
-            text_viewer = self.result_container.widget()
-            text_viewer.set_text(response)
+            self.text_viewer.set_text(response)
             self.result_container.setFixedSize(
-                self.WIDTH, min(text_viewer.sizeHint().height(), self.result_container_maximum_height)
+                self.WIDTH, min(self.text_viewer.sizeHint().height(), self.result_container_maximum_height)
             )
             self.result_container.repaint()
             self.adjustSize()
         elif isinstance(response, LLMResult):
             # ai response ended
-            self.text_edit.setReadOnly(False)
+            self._switch_mode(to=Mode.SEARCH)
         else:
             raise ValueError(f"Unknown type of chunk: {type(response)}")
 
@@ -262,7 +278,6 @@ class CommandWindow(FramelessWindow):
             self.set_widget_in_result_container(widget=None)
             return
         result = self.retriever_agent.act(trigger_attrs={"content": text})
-        command_result_list = CommandResultList(width=self.WIDTH)
-        command_result_list.load_list_items(matches=result.content, search_str=text)
-        self.set_widget_in_result_container(command_result_list)
+        self.result_list.load_list_items(matches=result.content, search_str=text)
+        self.set_widget_in_result_container(self.result_list)
         return result

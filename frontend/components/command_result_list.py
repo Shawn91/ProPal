@@ -1,7 +1,8 @@
 from numbers import Number
 from typing import List, Any
 
-from PySide6.QtCore import Qt, QTranslator, QSize
+from PySide6.QtCore import Qt, QTranslator, QSize, Signal
+from PySide6.QtGui import QKeyEvent
 from PySide6.QtWidgets import QListWidgetItem
 from qfluentwidgets import ListWidget
 
@@ -44,6 +45,7 @@ class TextMatchesSorter:
 
 class CommandResultList(ListWidget):
     # TODO: replace the parent of CommandResultList to list view and use custom ListItem to customize ui
+    GO_BEYOND_START_OF_LIST_SIGNAL = Signal()
 
     def __init__(self, matches: List[Match] = None, search_str: str = "", width=1000, parent=None):
         """
@@ -57,6 +59,12 @@ class CommandResultList(ListWidget):
         self.setup_ui()
         if matches:
             self.load_list_items(matches=self.matches, search_str=self.search_str)
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() == Qt.Key_Up and self.currentRow() == 0:
+            self.GO_BEYOND_START_OF_LIST_SIGNAL.emit()
+        else:
+            super().keyPressEvent(event)
 
     def setup_ui(self):
         self.setStyleSheet("background-color:white;")

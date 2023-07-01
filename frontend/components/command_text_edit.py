@@ -10,6 +10,7 @@ class CommandTextEdit(PlainTextEdit):
     """A text edit widget that supports search mode and chat mode."""
 
     CONFIRM_SIGNAL = Signal(str)  # signal emitted when user press enter
+    GO_BEYOND_END_OF_DOCUMENT_SIGNAL = Signal()  # signal emitted when user press down arrow key at the last line
 
     PADDING = 10  # distance in pixels between border to edit area
 
@@ -47,6 +48,7 @@ class CommandTextEdit(PlainTextEdit):
     def enter_talk_mode(self):
         """user is typing in the message box to talk to AI."""
         self.setReadOnly(False)
+        self.setFocus()
         self.setPlaceholderText(QTranslator.tr("Type to talk to AI."))
         self.viewport().repaint()
 
@@ -55,8 +57,8 @@ class CommandTextEdit(PlainTextEdit):
         self.setReadOnly(True)
 
     def enter_search_mode(self):
-        self.clear()
         self.setReadOnly(False)
+        self.setFocus()
         self.setPlaceholderText(
             QTranslator.tr(
                 "Type to search for prompts, chat histories or applications, or start talking to AI.",
@@ -65,7 +67,6 @@ class CommandTextEdit(PlainTextEdit):
         self.viewport().repaint()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        """when user types SPACE, try to recognize the command. Otherwise, pass the event to the base class."""
         text = self.toPlainText()
         enter_pressed = event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return
         if enter_pressed and event.modifiers() == Qt.ShiftModifier:
@@ -76,6 +77,10 @@ class CommandTextEdit(PlainTextEdit):
                 return
             self.CONFIRM_SIGNAL.emit(text)
             return
+        elif event.key() == Qt.Key_Down:
+            # if cursor is already at the last line, emit signal
+            if self.textCursor().blockNumber() == self.document().blockCount() - 1:
+                self.GO_BEYOND_END_OF_DOCUMENT_SIGNAL.emit()
 
         super().keyPressEvent(event)
 
