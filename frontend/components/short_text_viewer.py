@@ -18,7 +18,8 @@ class ShortTextViewer(QLabel):
 
         self.text_format = ""
         self.text = ""
-        self.set_text(text=text, text_format=text_format)
+        if self.text:
+            self.set_text(text=text, text_format=text_format)
 
     def setup_ui(self):
         self.setFont(setting.default_font)
@@ -39,3 +40,4 @@ class ShortTextViewer(QLabel):
             self.setText(self.markdown_parser.to_html(self.text))
         else:
             self.setText(text)
+        self.adjustSize()

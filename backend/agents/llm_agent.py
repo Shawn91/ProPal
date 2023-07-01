@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Optional, List, Tuple, Iterator
+from typing import Dict, Optional, Tuple, Iterator
 
 import tiktoken
 
@@ -12,61 +12,69 @@ class Model(str, Enum):
     GPT_3_5_TURBO = "gpt-3.5-turbo"
 
 
-MODEL_INFO = {Model.GPT_3_5_TURBO: {"provider": "OpenAI", "unit_price_input": 0.0015, "unit_price_output": 0.0002}}
+MODEL_INFO = {
+    Model.GPT_3_5_TURBO: {
+        "provider": "OpenAI",
+        "unit_price_input": 0.0015,  # for 1000 tokens
+        "unit_price_output": 0.0002,  # for 1000 tokens
+        "extra_tokens_per_message": 3,  # openai add 3 extra tokens to every message to format it
+        "extra_tokens_for_reply": 3,  # every reply is primed with <|start|>assistant<|message|>, hence the 3 here
+    }
+}
 
 
-class LLMStreamRequest:
-    import openai
-
-    openai.api_key = setting.get("OPENAI_API_KEY")
-    openai.proxy = setting.get("PROXY")
-
-    def __init__(self, cutoff_value: int, model_name: Model, messages: List, temperature: float):
-        """
-        :param cutoff_value: yield results received when num of tokens reach this value
-        """
-        self.cutoff_value = cutoff_value
-        self.model_name = model_name
-        self.messages = messages
-        self.temperature = temperature
-        self.complete_message = ""
-        self.token_encoding = tiktoken.encoding_for_model(self.model_name)
-
-    @property
-    def total_token_usages(self) -> Tuple[int, int]:
-        """see https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
-        for reference
-        """
-        # openai add 3 extra tokens to every message to format it
-        extra_tokens_per_message = 3
-        input_num_tokens = 0
-        for message in self.messages:
-            input_num_tokens += extra_tokens_per_message
-            for key, value in message.items():
-                input_num_tokens += len(self.token_encoding.encode(value))
-                if key == "name":
-                    input_num_tokens += 1
-        input_num_tokens += 3  # every reply is primed with <|start|>assistant<|message|>, hence the 3 here
-        output_num_tokens = len(self.token_encoding.encode(self.complete_message))
-        return input_num_tokens, output_num_tokens
-
-    def send(self) -> Iterator[str]:
-        res = self.openai.ChatCompletion.create(
-            model=self.model_name,
-            messages=self.messages,
-            temperature=self.temperature,
-            stream=True,
-        )
-        collected_message = ""
-        for chunk in res:
-            collected_message += chunk["choices"][0]["delta"].get("content", "")  # extract the message
-            if len(self.token_encoding.encode(collected_message)) >= self.cutoff_value:
-                self.complete_message += collected_message
-                collected_message = ""
-                yield self.complete_message
-        if collected_message:
-            self.complete_message += collected_message
-            yield self.complete_message
+# class LLMStreamRequest:
+#     import openai
+#
+#     openai.api_key = setting.get("OPENAI_API_KEY")
+#     openai.proxy = setting.get("PROXY")
+#
+#     def __init__(self, cutoff_value: int, model_name: Model, messages: List, temperature: float):
+#         """
+#         :param cutoff_value: yield results received when num of tokens reach this value
+#         """
+#         self.cutoff_value = cutoff_value
+#         self.model_name = model_name
+#         self.messages = messages
+#         self.temperature = temperature
+#         self.complete_message = ""
+#         self.token_encoding = tiktoken.encoding_for_model(self.model_name)
+#
+#     @property
+#     def total_token_usages(self) -> Tuple[int, int]:
+#         """see https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
+#         for reference
+#         """
+#         # openai add 3 extra tokens to every message to format it
+#         extra_tokens_per_message = 3
+#         input_num_tokens = 0
+#         for message in self.messages:
+#             input_num_tokens += extra_tokens_per_message
+#             for key, value in message.items():
+#                 input_num_tokens += len(self.token_encoding.encode(value))
+#                 if key == "name":
+#                     input_num_tokens += 1
+#         input_num_tokens += 3  # every reply is primed with <|start|>assistant<|message|>, hence the 3 here
+#         output_num_tokens = len(self.token_encoding.encode(self.complete_message))
+#         return input_num_tokens, output_num_tokens
+#
+#     def send(self) -> Iterator[str]:
+#         res = self.openai.ChatCompletion.create(
+#             model=self.model_name,
+#             messages=self.messages,
+#             temperature=self.temperature,
+#             stream=True,
+#         )
+#         collected_message = ""
+#         for chunk in res:
+#             collected_message += chunk["choices"][0]["delta"].get("content", "")  # extract the message
+#             if len(self.token_encoding.encode(collected_message)) >= self.cutoff_value:
+#                 self.complete_message += collected_message
+#                 collected_message = ""
+#                 yield self.complete_message
+#         if collected_message:
+#             self.complete_message += collected_message
+#             yield self.complete_message
 
 
 class LLMTrigger(BaseTrigger):
@@ -110,8 +118,8 @@ class LLMResult(BaseResult):
     @property
     def cost(self) -> float:
         return (
-                self.input_token_usage * MODEL_INFO[self.trigger.model_name]["unit_price_input"]
-                + self.output_token_usage * MODEL_INFO[self.trigger.model_name]["unit_price_output"]
+                self.input_token_usage / 1000 * MODEL_INFO[self.trigger.model_name]["unit_price_input"]
+                + self.output_token_usage / 1000 * MODEL_INFO[self.trigger.model_name]["unit_price_output"]
         )
 
     def to_dict(self):
@@ -128,6 +136,11 @@ class LLMResult(BaseResult):
 
 
 class LLMAgent(BaseAgent):
+    import openai
+
+    openai.api_key = setting.get("OPENAI_API_KEY")
+    openai.proxy = setting.get("PROXY")
+
     TRIGGER_CLASS = LLMTrigger
     RESULT_CLASS = LLMResult
 
@@ -142,27 +155,78 @@ class LLMAgent(BaseAgent):
     def do(self, trigger: LLMTrigger, result: LLMResult):
         return self.chat(trigger=trigger, result=result)
 
-    @staticmethod
-    def chat(trigger: LLMTrigger, result: LLMResult) -> Iterator[str | LLMResult]:
-        request = LLMStreamRequest(cutoff_value=5, model_name=trigger.model_name,
-                                   messages=trigger.history + [{"role": "user", "content": trigger.content}],
-                                   temperature=trigger.temperature)
-        response = request.send()
-        yield from response
-        input_token_usage, output_token_usage = request.total_token_usages
+    # @staticmethod
+    def chat(self, trigger: LLMTrigger, result: LLMResult, cutoff_value=6) -> Iterator[str | LLMResult]:
+        # request = LLMStreamRequest(cutoff_value=5, model_name=trigger.model_name,
+        #                            messages=trigger.history + [{"role": "user", "content": trigger.content}],
+        #                            temperature=trigger.temperature)
+        token_encoding = tiktoken.encoding_for_model(trigger.model_name)
+        complete_message = ""
+        collected_message = ""
+        res = self.openai.ChatCompletion.create(
+            model=trigger.model_name,
+            messages=trigger.history + [{"role": "user", "content": trigger.content}],
+            temperature=trigger.temperature,
+            stream=True,
+        )
+        for chunk in res:
+            collected_message += chunk["choices"][0]["delta"].get("content", "")  # extract the message
+            if len(token_encoding.encode(collected_message)) >= cutoff_value:
+                complete_message += collected_message
+                collected_message = ""
+                value = yield complete_message
+                if value == "STOP":
+                    res.close()
+                    break
+        if collected_message:
+            complete_message += collected_message
+            yield complete_message
+        input_token_usage, output_token_usage = self._calculate_token_usages(
+            encoding=token_encoding,
+            model_name=trigger.model_name,
+            history_messages=trigger.history + [{"role": "user", "content": trigger.content}],
+            reply_message=complete_message,
+        )
         result.set(
-            content=request.send(),
+            content=complete_message,
             input_token_usage=input_token_usage,
             output_token_usage=output_token_usage,
         )
         yield result
 
+    @staticmethod
+    def _calculate_token_usages(encoding, model_name, history_messages, reply_message) -> Tuple[int, int]:
+        """see https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
+        for reference
+        """
+        extra_tokens_per_message = MODEL_INFO[model_name].get("extra_tokens_per_message", 0)
+        input_num_tokens = 0
+        for message in history_messages:
+            input_num_tokens += extra_tokens_per_message
+            for key, value in message.items():
+                input_num_tokens += len(encoding.encode(value))
+                if key == "name":
+                    input_num_tokens += 1
+        input_num_tokens += MODEL_INFO[model_name].get("extra_tokens_for_reply", 0)
+        output_num_tokens = len(encoding.encode(reply_message))
+        return input_num_tokens, output_num_tokens
+
 
 if __name__ == "__main__":
     agent = LLMAgent()
-    trigger = LLMTrigger(content="Hello, how are you?")
+    trigger = LLMTrigger(content="count from 1 to 15")
     chat_response = agent.chat(trigger=trigger, result=LLMResult(trigger=trigger))
-    for chunk in chat_response:
-        print(chunk)
-        if isinstance(chunk, LLMResult):
-            chunk
+    while True:
+        try:
+            chunk = next(chat_response)
+            print(chunk, "\n")
+            if isinstance(chunk, str):
+                if "18" in chunk:
+                    chunk = chat_response.send("STOP")
+                    assert isinstance(chunk, LLMResult)
+                    print("LLMResullt：", chunk.content)
+                    print("token usage:", chunk.input_token_usage, chunk.output_token_usage)
+                    break
+        except:
+            print(type(chunk))
+            break

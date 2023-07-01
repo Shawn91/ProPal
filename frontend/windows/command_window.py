@@ -1,11 +1,11 @@
 from typing import Optional
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QThread, Signal
 from PySide6.QtGui import QHideEvent, QShortcut, QTextCursor
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QApplication, QWidget, QVBoxLayout, QScrollArea
 from qframelesswindow import FramelessWindow
 
-from backend.agents.llm_agent import LLMAgent
+from backend.agents.llm_agent import LLMAgent, LLMResult
 from backend.agents.retriever_agent import RetrieverAgent
 from backend.models import Match
 from backend.tools.database import Prompt
@@ -17,6 +17,41 @@ from frontend.components.short_text_viewer import ShortTextViewer
 from frontend.components.string_template_filling_dialog import StringTemplateFillingDialog
 from frontend.hotkey_manager import hotkey_manager
 from setting.setting_reader import setting
+
+
+class LLMRequestThread(QThread):
+    content_received = Signal(str)
+    result_received = Signal(LLMResult)
+
+    def __init__(self, llm_agent, user_input: str = ""):
+        super().__init__()
+        self.llm_agent = llm_agent
+        self.user_input = user_input
+        self.stop_flag = False  # whether to stop the thread
+
+    def run(self):
+        response = self.llm_agent.act(trigger_attrs={"user_input": self.user_input})
+        while True:
+            if self.stop_flag:
+                llm_result = response.send("STOP")  # stop streaming response
+                self.result_received.emit(llm_result)
+                self.reset()
+                break
+
+            try:
+                chunk = next(response)
+                if isinstance(chunk, str):
+                    self.content_received.emit(chunk)
+                elif isinstance(chunk, LLMResult):
+                    self.result_received.emit(chunk)
+            except StopIteration:
+                self.reset()
+                break
+
+    def reset(self):
+        """restore the thread to initial state"""
+        self.stop_flag = False
+        self.user_input = ""
 
 
 class CommandWindow(FramelessWindow):
@@ -31,8 +66,10 @@ class CommandWindow(FramelessWindow):
         self.indicator_label = QLabel()
         self.input_container = QWidget()  # contains text edit and indicator label
         self.result_container = QScrollArea()  # contains search result, ai response, etc.
-        self.llm_agent = LLMAgent()
+        self.llm_thread = LLMRequestThread(llm_agent=LLMAgent())
         self.retriever_agent = RetrieverAgent()
+
+        self.result_container_maximum_height = QApplication.instance().primaryScreen().size().height() * 0.5
 
         self.setup_ui()
         self.connect_hotkey()
@@ -63,6 +100,8 @@ class CommandWindow(FramelessWindow):
         self.text_edit.CONFIRM_TALK_SIGNAL.connect(self._talk_to_ai)
         self.text_edit.textChanged.connect(self._search)
         self.text_edit.textChanged.connect(self._adjust_height)
+        self.llm_thread.content_received.connect(self._update_ai_response)
+        self.llm_thread.result_received.connect(self._update_ai_response)
 
     def toggle_visibility(self):
         if self.isVisible():
@@ -122,9 +161,9 @@ class CommandWindow(FramelessWindow):
                 existed_widget.deleteLater()
             self.result_container.setWidget(widget)
             self.result_container.show()
-            result_container_maximum_height = QApplication.instance().primaryScreen().size().height() * 0.5
-            self.result_container.setFixedSize(self.WIDTH,
-                                               min(widget.sizeHint().height(), result_container_maximum_height))
+            self.result_container.setFixedSize(
+                self.WIDTH, min(widget.sizeHint().height(), self.result_container_maximum_height)
+            )
             if allow_horizontal_scrollbar and widget.sizeHint().width() > self.WIDTH:
                 self.result_container.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
             else:
@@ -165,9 +204,25 @@ class CommandWindow(FramelessWindow):
 
     def _talk_to_ai(self):
         text = self.text_edit.toPlainText()
-        llm_result = self.llm_agent.act(trigger_attrs={"user_input": text})
-        text_viewer = ShortTextViewer(text=llm_result.content, text_format="markdown")
+        text_viewer = ShortTextViewer(text="", text_format="markdown")
         self.set_widget_in_result_container(text_viewer, allow_horizontal_scrollbar=True)
+
+        self.llm_thread.user_input = text
+        self.llm_thread.start()
+
+    def _update_ai_response(self, response: str | LLMResult):
+        if isinstance(response, str):
+            text_viewer = self.result_container.widget()
+            text_viewer.set_text(response)
+            self.result_container.setFixedSize(
+                self.WIDTH, min(text_viewer.sizeHint().height(), self.result_container_maximum_height)
+            )
+            self.result_container.repaint()
+            self.adjustSize()
+        elif isinstance(response, LLMResult):
+            ...
+        else:
+            raise ValueError(f"Unknown type of chunk: {type(response)}")
 
     def _search(self):
         text = self.text_edit.toPlainText()
