@@ -154,6 +154,7 @@ class CommandWindow(FramelessWindow):
         # stop the llm if it is running
         if self.llm_thread.isRunning():
             self.llm_thread.stop_flag = True
+            self.text_edit.setReadOnly(False)
 
     def _adjust_height(self):
         """adjust the height of the window to fit the content"""
@@ -209,6 +210,7 @@ class CommandWindow(FramelessWindow):
 
     def _talk_to_ai(self):
         text = self.text_edit.toPlainText()
+        self.text_edit.setReadOnly(True)
         text_viewer = ShortTextViewer(text="", text_format="markdown")
         self.set_widget_in_result_container(text_viewer, allow_horizontal_scrollbar=True)
 
@@ -225,7 +227,8 @@ class CommandWindow(FramelessWindow):
             self.result_container.repaint()
             self.adjustSize()
         elif isinstance(response, LLMResult):
-            ...
+            # ai response ended
+            self.text_edit.setReadOnly(False)
         else:
             raise ValueError(f"Unknown type of chunk: {type(response)}")
 
