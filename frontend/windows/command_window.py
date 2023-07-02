@@ -237,6 +237,8 @@ class CommandWindow(FramelessWindow):
                 dialog = StringTemplateFillingDialog(template=prompt.content_template, parent=self)
                 dialog.TEMPLATE_FILLED_SIGNAL.connect(self._wait_for_talking_to_ai)
                 dialog.exec()
+            else:
+                self._wait_for_talking_to_ai(prompt.content)
         elif match.category == "command":
             command: Command = match.data
             command.execute(parent=self)
