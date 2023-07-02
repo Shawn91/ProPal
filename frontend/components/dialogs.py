@@ -1,9 +1,11 @@
-from PySide6.QtCore import QTranslator
-from PySide6.QtWidgets import QWidget, QVBoxLayout
+from PySide6.QtCore import QTranslator, Signal
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QGroupBox, QFormLayout
 from qfluentwidgets import PlainTextEdit, LineEdit
 
 from backend.tools.database import Prompt
+from backend.tools.string_template import StringTemplate
 from frontend.widgets.dialog import Dialog
+from frontend.widgets.label import Label
 from setting.setting_reader import setting
 
 
@@ -51,13 +53,25 @@ class NewPromptWidget(QWidget):
 class NewPromptDialog(Dialog):
     def __init__(self, prompt: Prompt = None, parent=None):
         self.new_prompt_widget = NewPromptWidget(prompt=prompt)
+        self.validation_failed_warning = Label(QTranslator.tr("You must enter a prompt."))
         title = QTranslator.tr("Edit Prompt") if prompt else QTranslator.tr("New Prompt")
         super().__init__(title=title, size=(500, 300), parent=parent)
 
     def setup_central_layout(self):
         self.central_layout.addWidget(self.new_prompt_widget)
+        self.validation_failed_warning.hide()
+        self.validation_failed_warning.setStyleSheet(f"color: {setting.get('SEVERE_WARNING_COLOR')}")
+        self.central_layout.addWidget(self.validation_failed_warning)
+
+    def validate(self) -> bool:
+        if not self.new_prompt_widget.prompt_edit.toPlainText().strip():
+            self.validation_failed_warning.show()
+            return False
+        return True
 
     def accept(self) -> None:
+        if not self.validate():
+            return
         self.new_prompt_widget.save_prompt()
         super().accept()
 
@@ -86,6 +100,55 @@ class LLMConnectionDialog(Dialog):
         setting.set(key="OPENAI_API_KEY", value=self.api_key_edit.text())
         setting.set(key="PROXY", value=self.proxy_edit.text())
         super().accept()
+
+
+class StringTemplateFillingDialog(Dialog):
+    TEMPLATE_FILLED_SIGNAL = Signal(str)
+
+    def __init__(self, template: StringTemplate, parent=None):
+        self.template = template
+        self.form = QGroupBox()
+        self.validation_failed_warning = Label(QTranslator.tr("All fields must be filled."))
+
+        super().__init__(title=QTranslator.tr("Fill the prompt template"), parent=parent)
+
+    def setup_central_layout(self):
+        form_layout = QFormLayout()
+        for identifier in self.template.get_identifiers():
+            form_layout.addRow(Label(text=identifier), LineEdit())
+        self.form.setLayout(form_layout)
+
+        self.validation_failed_warning.hide()
+        self.validation_failed_warning.setStyleSheet(f"color: {setting.get('SEVERE_WARNING_COLOR')}")
+
+        self.central_layout.addWidget(Label(text=self.template.template))
+        self.central_layout.addWidget(self.form)
+        self.central_layout.addWidget(self.validation_failed_warning)
+
+    def get_form_data(self):
+        data = {}
+        for i in range(self.form.layout().rowCount()):
+            label = self.form.layout().itemAt(i, QFormLayout.LabelRole).widget()
+            line_edit = self.form.layout().itemAt(i, QFormLayout.FieldRole).widget()
+            data[label.text()] = line_edit.text().strip()
+        return data
+
+    def validate_form(self) -> bool:
+        """all fields must be filled"""
+        form_data = self.get_form_data()
+        if any(not v for v in form_data.values()):
+            self.validation_failed_warning.show()
+            return False
+        return True
+
+    def fill_template(self):
+        form_data = self.get_form_data()
+        return self.template.substitute(form_data)
+
+    def accept(self) -> None:
+        if self.validate_form():
+            self.TEMPLATE_FILLED_SIGNAL.emit(self.fill_template())
+            super().accept()
 
 
 if __name__ == "__main__":

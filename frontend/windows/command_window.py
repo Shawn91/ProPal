@@ -14,8 +14,8 @@ from frontend.commands import Command
 from frontend.components.command_result_list import CommandResultList
 # from frontend.windows.base import FramelessWindow
 from frontend.components.command_text_edit import CommandTextEdit
+from frontend.components.dialogs import StringTemplateFillingDialog
 from frontend.components.short_text_viewer import ShortTextViewer
-from frontend.components.string_template_filling_dialog import StringTemplateFillingDialog
 from frontend.hotkey_manager import hotkey_manager
 from setting.setting_reader import setting
 

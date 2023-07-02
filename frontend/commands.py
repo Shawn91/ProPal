@@ -54,7 +54,9 @@ class CommandManager:
 
     def search(self, search_str: str) -> List[Match]:
         """Search commands by search_str"""
-        raw_matches = [command for command in self.commands.values() if search_str in command.display_name.lower()]
+        raw_matches = [
+            command for command in self.commands.values() if search_str.lower() in command.display_name.lower()
+        ]
         # search for commands with initials matching search_str
         for command in self.commands.values():
             if command in raw_matches:

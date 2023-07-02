@@ -4,6 +4,8 @@ from PySide6.QtCore import QTranslator
 from PySide6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout
 from qfluentwidgets import PrimaryPushButton, PushButton
 
+from frontend.hotkey_manager import hotkey_manager
+
 
 class Dialog(QDialog):
     """title bar is necessary, at least on windows, for a dialog to properly display
@@ -24,6 +26,9 @@ class Dialog(QDialog):
         self.button_box.rejected.connect(self.reject)
         self.setup_central_layout()
         self.setup_ui(size=size)
+
+        shortcut = hotkey_manager.save_hotkey.create_shortcut(self)
+        shortcut.activated.connect(self.accept)
 
     def setup_central_layout(self):
         raise NotImplementedError
