@@ -88,7 +88,7 @@ class Prompt(pw.Model, ModelWithTags):
                 result.append(match)
                 continue
             for subcontent in get_subsequences(seq=match.content, exclude_indices=match.identifier_positions_list):
-                if search_str in subcontent:
+                if search_str.lower() in subcontent.lower():
                     result.append(match)
                     break
         return result
