@@ -8,7 +8,7 @@ from playhouse.shortcuts import model_to_dict
 
 from backend.models import Match
 from backend.tools.string_template import StringTemplate
-from backend.tools.utils import get_subsequences
+from backend.tools.utils import get_subsequences, find_positions_of_subsequence
 from setting.setting_reader import setting
 
 
@@ -51,7 +51,8 @@ class ModelWithTags:
 
 class Prompt(pw.Model, ModelWithTags):
     """
-    Note: when we update the content of a prompt instance and call prompt.save(), the identifier_positions field is updated.
+    Note: when we update the content of a prompt instance and call prompt.save(),
+            the identifier_positions field is updated.
         However, when we use Prompt.update(xxx).where(xxx).execute(), the identifier_positions field is not updated.
     """
 
@@ -76,7 +77,7 @@ class Prompt(pw.Model, ModelWithTags):
         return StringTemplate(self.content)
 
     def save(self, **kwargs):
-        self.identifier_positions = self.calculate_identifier_positions_string()
+        self.identifier_positions = self.calculate_identifier_positions()
         return super().save(**kwargs)
 
     @staticmethod
@@ -100,25 +101,39 @@ class Prompt(pw.Model, ModelWithTags):
         matches = []
         for raw_match in raw_content_matches:
             is_also_tag_match = raw_match in raw_tag_matches
-            match_fields = ['content'] if not is_also_tag_match else ['content', 'tags']
+            match_fields = ["content"] if not is_also_tag_match else ["content", "tags"]
             if is_also_tag_match:
-                match_fields_values = [raw_match.content, [tag for tag in raw_match.tags if search_str in tag]]
+                match_fields_values = {
+                    "content": raw_match.content,
+                    "tags": [tag for tag in raw_match.tags if search_str in tag],
+                }
             else:
-                match_fields_values = [raw_match.content]
-            match = Match(source="database", match_fields=match_fields, data=raw_match, category="prompt",
-                          match_fields_values=match_fields_values)
+                match_fields_values = {"content": raw_match.content}
+            match = Match(
+                source="database",
+                match_fields=match_fields,
+                data=raw_match,
+                category="prompt",
+                match_fields_values=match_fields_values,
+                match_positions={"content": find_positions_of_subsequence(raw_match.content, search_str)},
+            )
             matches.append(match)
         for raw_match in raw_tag_matches:
             if raw_match in raw_content_matches:
                 continue
-            match_fields = ['tags']
-            match_fields_values = [[tag for tag in raw_match.tags if search_str in tag]]
-            match = Match(source="database", match_fields=match_fields, data=raw_match, category="prompt",
-                          match_fields_values=match_fields_values)
+            match_fields = ["tags"]
+            match_fields_values = {"tags": [tag for tag in raw_match.tags if search_str in tag]}
+            match = Match(
+                source="database",
+                match_fields=match_fields,
+                data=raw_match,
+                category="prompt",
+                match_fields_values=match_fields_values,
+            )
             matches.append(match)
         return matches
 
-    def calculate_identifier_positions_string(self):
+    def calculate_identifier_positions(self) -> str:
         """Identifiers in the content should not be matched against the search query.
         Therefore, identifier positions, including ${}, are stored in the database and used to filter out.
 

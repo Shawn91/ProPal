@@ -53,6 +53,3 @@ class RetrieverAgent(BaseAgent):
         db_matches = db_manager.search_by_string(search_str=search_str)
         command_matches = command_manager.search(search_str=search_str)
         return db_matches + command_matches
-
-    def _search_db(self, search_str):
-        return db_manager.search_by_string(search_str=search_str)

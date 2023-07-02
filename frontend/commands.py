@@ -63,7 +63,7 @@ class CommandManager:
             if len(command_words) < len(search_str):
                 continue
             if all(
-                    command_word.startswith(search_char) for search_char, command_word in zip(search_str, command_words)
+                command_word.startswith(search_char) for search_char, command_word in zip(search_str, command_words)
             ):
                 raw_matches.append(command)
         return [
@@ -72,7 +72,7 @@ class CommandManager:
                 category="command",
                 data=x,
                 match_fields=["display_name"],
-                match_fields_values=[x.display_name],
+                match_fields_values={"display_name": x.display_name},
             )
             for x in raw_matches
         ]

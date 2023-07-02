@@ -1,5 +1,5 @@
 from numbers import Number
-from typing import List, Any
+from typing import List, Any, Iterable
 
 from PySide6.QtCore import Qt, QTranslator, QSize, Signal
 from PySide6.QtGui import QKeyEvent
@@ -12,9 +12,9 @@ from setting.setting_reader import setting
 
 class TextMatchesSorter:
     @classmethod
-    def get_shortest_text_value(cls, values: List[Any]) -> str:
+    def get_shortest_text_value(cls, values: Iterable[Any]) -> str:
         """get the shortest text of the field that matches the search string"""
-        shortest_value = ''
+        shortest_value = ""
         for value in values:
             if not isinstance(value, str):
                 continue
@@ -32,7 +32,7 @@ class TextMatchesSorter:
         1. TODO: if search_str matches the initials of words in match, give a higher score
         2. the shorter the match text, the higher the score
         """
-        text = cls.get_shortest_text_value(match.match_fields_values)
+        text = cls.get_shortest_text_value(match.match_fields_values.values())
         if not text:
             return 0
         return len(search_str) / len(text)
@@ -88,7 +88,13 @@ class CommandResultList(ListWidget):
         for match in TextMatchesSorter.sort(matches=self.matches, search_str=search_str):
             text = ""
             if match.source == "database":
-                text += "    " + match.category.capitalize() + "    " + match.data.content
+                cutoff_text = match.data.content.replace("\n", "\\n")
+                if match.match_positions.get("content"):
+                    match_position = match.match_positions["content"][0]
+                    center_position = int((match_position[1] - match_position[0]) / 2) + match_position[0]
+                    cutoff_text = self._cutoff_text(cutoff_text, center_position=center_position)
+                text += "    " + match.category.capitalize() + "    " + cutoff_text
+
                 if hasattr(match.data, "tags") and match.data.tags:
                     text += "    " + ", ".join(match.data.tags)
             elif match.source == "command":
@@ -105,3 +111,23 @@ class CommandResultList(ListWidget):
         else:
             self.addItem(talk_to_ai_item)
         self.setCurrentRow(0)
+
+    @staticmethod
+    def _cutoff_text(text: str, center_position: int) -> str:
+        if len(text) < setting.get("MAXIMUM_DISPLAY_LENGTH_IN_SEARCH_RESULT"):
+            return text
+        half_length = int(setting.get("MAXIMUM_DISPLAY_LENGTH_IN_SEARCH_RESULT") / 2)
+        
+        start = max(0, center_position - half_length)
+        end = min(len(text), center_position + half_length)
+        # if one side is shorter than half of the maximum length, then extend the other side
+        if center_position < half_length:
+            end = min(len(text), end + half_length - center_position)
+        if len(text) - center_position < half_length:
+            start = max(0, start - (half_length - (len(text) - center_position)))
+        cutoff_text = text[start:end]
+        if start > 0:
+            cutoff_text = "... " + cutoff_text
+        if end < len(text):
+            cutoff_text = cutoff_text + " ..."
+        return cutoff_text

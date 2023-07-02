@@ -21,6 +21,38 @@ def get_subsequences(seq, exclude_indices):
     return subsequences
 
 
+def find_positions_of_subsequence(seq, subseq, start=0, ignore_case=True):
+    """
+    >>> find_positions_of_subsequence('abcdef', 'cd')
+    [(2, 4)]
+
+    >>> find_positions_of_subsequence('abcdef', 'cde')
+    [(2, 5)]
+
+    >>> find_positions_of_subsequence('abcdecd', 'cd')
+    [(2, 4), (5, 7)]
+
+    >>> find_positions_of_subsequence('abcdef', 'cdefg')
+    []
+
+    >>> find_positions_of_subsequence('abcdef', 'cd', start=3)
+    []
+    """
+    positions = []
+    if ignore_case:
+        subseq = subseq.lower()
+        seq = seq.lower()
+    while True:
+        start = seq.find(subseq, start)
+        if start == -1:
+            break
+        end = start + len(subseq)
+        positions.append((start, end))
+        start = end
+
+    return positions
+
+
 if __name__ == "__main__":
     import doctest
 
