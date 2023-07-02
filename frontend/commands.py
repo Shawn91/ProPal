@@ -3,7 +3,7 @@ from typing import List
 from PySide6.QtCore import QTranslator
 
 from backend.models import Match
-from frontend.components.new_prompt import NewPromptDialog
+from frontend.components.dialogs import NewPromptDialog, LLMConnectionDialog
 
 
 class Command:
@@ -22,6 +22,26 @@ class AddNewPromptCommand(Command):
     @staticmethod
     def execute(parent):
         dialog = NewPromptDialog(parent=parent)
+        dialog.exec()
+
+
+class SetProxyCommand(Command):
+    name = "SetProxy"
+    display_name = QTranslator.tr("Set Proxy")
+
+    @staticmethod
+    def execute(parent):
+        dialog = LLMConnectionDialog(parent=parent)
+        dialog.exec()
+
+
+class SetOpenAIKeyCommand(Command):
+    name = "SetOpenAIKey"
+    display_name = QTranslator.tr("Set OpenAI Key")
+
+    @staticmethod
+    def execute(parent):
+        dialog = LLMConnectionDialog(parent=parent)
         dialog.exec()
 
 
@@ -46,8 +66,16 @@ class CommandManager:
                     command_word.startswith(search_char) for search_char, command_word in zip(search_str, command_words)
             ):
                 raw_matches.append(command)
-        return [Match(source="command", category="command", data=x, match_fields=["display_name"],
-                      match_fields_values=[x.display_name]) for x in raw_matches]
+        return [
+            Match(
+                source="command",
+                category="command",
+                data=x,
+                match_fields=["display_name"],
+                match_fields_values=[x.display_name],
+            )
+            for x in raw_matches
+        ]
 
     @staticmethod
     def execute_command(command: Command, **kwargs):
@@ -56,26 +84,3 @@ class CommandManager:
 
 
 command_manager = CommandManager()
-
-# class SearchSetting(str, Enum):
-#     REGEX = "/re"
-#     CASE_SENSITIVE = "/cs"
-#
-#     @classmethod
-#     def has_value(cls, value):
-#         return value in cls._value2member_map_
-#
-#
-# class SearchType(str, Enum):
-#     PROMPT = "/pr"
-#     CHAT_HISTORY = "/ch"
-#     FEATURE = "/ft"
-#
-#     @classmethod
-#     def has_value(cls, value):
-#         return value in cls._value2member_map_
-#
-#
-# def is_valid_command(command: str) -> bool:
-#     """check if the command is valid"""
-#     return SearchSetting.has_value(command) or SearchType.has_value(command)

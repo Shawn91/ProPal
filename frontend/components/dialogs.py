@@ -62,6 +62,32 @@ class NewPromptDialog(Dialog):
         super().accept()
 
 
+class LLMConnectionDialog(Dialog):
+    def __init__(self, parent=None):
+        self.api_key_edit = LineEdit()
+        self.api_key_edit.setText(setting.get("OPENAI_API_KEY", default=""))
+        self.proxy_edit = LineEdit()
+        self.proxy_edit.setText(setting.get("PROXY", default=""))
+        super().__init__(title=QTranslator.tr("API Key"), size=(500, 200), parent=parent)
+
+    def setup_central_layout(self):
+        self.setFont(setting.default_font)
+        self.api_key_edit.setFont(setting.default_font)
+        self.api_key_edit.setPlaceholderText(QTranslator.tr("Enter your OPENAI API key here"))
+        self.api_key_edit.setFocus()
+
+        self.proxy_edit.setFont(setting.default_font)
+        self.proxy_edit.setPlaceholderText(QTranslator.tr("Enter your proxy here"))
+
+        self.central_layout.addWidget(self.api_key_edit)
+        self.central_layout.addWidget(self.proxy_edit)
+
+    def accept(self) -> None:
+        setting.set(key="OPENAI_API_KEY", value=self.api_key_edit.text())
+        setting.set(key="PROXY", value=self.proxy_edit.text())
+        super().accept()
+
+
 if __name__ == "__main__":
     from PySide6.QtWidgets import QApplication
     import sys

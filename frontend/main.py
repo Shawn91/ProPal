@@ -3,6 +3,9 @@ from pathlib import Path
 
 from PySide6.QtWidgets import QApplication
 
+from frontend.components.dialogs import LLMConnectionDialog
+from setting.setting_reader import setting
+
 if str(Path(__file__).parent.parent.resolve()) not in sys.path:
     sys.path.append(str(Path(__file__).parent.parent.resolve()))
 
@@ -15,7 +18,13 @@ class MyApp(QApplication):
         super().__init__(argv)
         self.hotkey_manager = HotkeyManager()
         self.search_window: CommandWindow = CommandWindow()
+        self.initial_checks()
         self.search_window.show()
+
+    @staticmethod
+    def initial_checks():
+        if not setting.get("OPENAI_API_KEY"):
+            LLMConnectionDialog().exec()
 
 
 if __name__ == "__main__":
