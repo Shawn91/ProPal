@@ -3,7 +3,7 @@ from pathlib import Path
 
 from PySide6.QtWidgets import QApplication
 
-from frontend.components.dialogs import LLMConnectionDialog
+from frontend.components.form_dialogs import LLMConnectionFormDialog
 from setting.setting_reader import setting
 
 if str(Path(__file__).parent.parent.resolve()) not in sys.path:
@@ -24,7 +24,7 @@ class MyApp(QApplication):
     @staticmethod
     def initial_checks():
         if not setting.get("OPENAI_API_KEY"):
-            LLMConnectionDialog().exec()
+            LLMConnectionFormDialog().exec()
 
 
 if __name__ == "__main__":

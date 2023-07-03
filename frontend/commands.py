@@ -3,7 +3,7 @@ from typing import List
 from PySide6.QtCore import QTranslator
 
 from backend.models import Match
-from frontend.components.dialogs import NewPromptDialog, LLMConnectionDialog
+from frontend.components.form_dialogs import NewPromptFormDialog, LLMConnectionFormDialog
 
 
 class Command:
@@ -21,7 +21,7 @@ class AddNewPromptCommand(Command):
 
     @staticmethod
     def execute(parent):
-        dialog = NewPromptDialog(parent=parent)
+        dialog = NewPromptFormDialog(parent=parent)
         dialog.exec()
 
 
@@ -31,7 +31,7 @@ class SetProxyCommand(Command):
 
     @staticmethod
     def execute(parent):
-        dialog = LLMConnectionDialog(parent=parent)
+        dialog = LLMConnectionFormDialog(parent=parent)
         dialog.exec()
 
 
@@ -41,7 +41,7 @@ class SetOpenAIKeyCommand(Command):
 
     @staticmethod
     def execute(parent):
-        dialog = LLMConnectionDialog(parent=parent)
+        dialog = LLMConnectionFormDialog(parent=parent)
         dialog.exec()
 
 
@@ -65,7 +65,7 @@ class CommandManager:
             if len(command_words) < len(search_str):
                 continue
             if all(
-                command_word.startswith(search_char) for search_char, command_word in zip(search_str, command_words)
+                    command_word.startswith(search_char) for search_char, command_word in zip(search_str, command_words)
             ):
                 raw_matches.append(command)
         return [

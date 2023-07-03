@@ -4,7 +4,7 @@ from qfluentwidgets import PlainTextEdit, LineEdit
 
 from backend.tools.database import Prompt
 from backend.tools.string_template import StringTemplate
-from frontend.widgets.dialog import Dialog
+from frontend.widgets.dialog import FormDialog
 from frontend.widgets.label import Label
 from setting.setting_reader import setting
 
@@ -50,7 +50,7 @@ class NewPromptWidget(QWidget):
         return self.prompt
 
 
-class NewPromptDialog(Dialog):
+class NewPromptFormDialog(FormDialog):
     def __init__(self, prompt: Prompt = None, parent=None):
         self.new_prompt_widget = NewPromptWidget(prompt=prompt)
         self.validation_failed_warning = Label(QTranslator.tr("You must enter a prompt."))
@@ -76,7 +76,7 @@ class NewPromptDialog(Dialog):
         super().accept()
 
 
-class LLMConnectionDialog(Dialog):
+class LLMConnectionFormDialog(FormDialog):
     def __init__(self, parent=None):
         self.api_key_edit = LineEdit()
         self.api_key_edit.setText(setting.get("OPENAI_API_KEY", default=""))
@@ -102,7 +102,7 @@ class LLMConnectionDialog(Dialog):
         super().accept()
 
 
-class StringTemplateFillingDialog(Dialog):
+class StringTemplateFillingDialog(FormDialog):
     TEMPLATE_FILLED_SIGNAL = Signal(str)
 
     def __init__(self, template: StringTemplate, parent=None):
@@ -156,6 +156,6 @@ if __name__ == "__main__":
     import sys
 
     app = QApplication(sys.argv)
-    new_prompt = NewPromptDialog()
+    new_prompt = NewPromptFormDialog()
     new_prompt.show()
     sys.exit(app.exec())

@@ -7,7 +7,7 @@ from qfluentwidgets import PrimaryPushButton, PushButton
 from frontend.hotkey_manager import hotkey_manager
 
 
-class Dialog(QDialog):
+class FormDialog(QDialog):
     """title bar is necessary, at least on windows, for a dialog to properly display
     when its parent widget is set to transparent
     """
