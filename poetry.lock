@@ -111,8 +111,8 @@ speedups = ["Brotli", "aiodns", "cchardet"]
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "aiosignal"
@@ -131,8 +131,8 @@ frozenlist = ">=1.1.0"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "async-timeout"
@@ -148,8 +148,8 @@ files = [
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "attrs"
@@ -172,8 +172,8 @@ tests-no-zope = ["cloudpickle", "hypothesis", "mypy (>=1.1.1)", "pympler", "pyte
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "certifi"
@@ -189,8 +189,8 @@ files = [
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "charset-normalizer"
@@ -279,8 +279,8 @@ files = [
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "colorama"
@@ -296,8 +296,8 @@ files = [
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "darkdetect"
@@ -316,8 +316,8 @@ macos-listener = ["pyobjc-framework-Cocoa"]
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "evdev"
@@ -332,8 +332,8 @@ files = [
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "frozenlist"
@@ -421,8 +421,8 @@ files = [
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "idna"
@@ -438,8 +438,8 @@ files = [
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "markdown"
@@ -458,8 +458,8 @@ testing = ["coverage", "pyyaml"]
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "multidict"
@@ -547,8 +547,8 @@ files = [
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "openai"
@@ -575,8 +575,8 @@ wandb = ["numpy", "openpyxl (>=3.0.7)", "pandas (>=1.2.3)", "pandas-stubs (>=1.1
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "peewee"
@@ -591,8 +591,8 @@ files = [
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pycocoa"
@@ -608,8 +608,8 @@ files = [
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pygments"
@@ -628,8 +628,8 @@ plugins = ["importlib-metadata"]
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pynput"
@@ -652,8 +652,8 @@ six = "*"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc"
@@ -825,8 +825,8 @@ allbindings = ["pyobjc-core (==9.2)", "pyobjc-framework-AVFoundation (==9.2)", "
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-core"
@@ -848,8 +848,8 @@ files = [
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-accessibility"
@@ -872,8 +872,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-accounts"
@@ -893,8 +893,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-addressbook"
@@ -916,8 +916,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-adservices"
@@ -937,8 +937,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-adsupport"
@@ -958,8 +958,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-applescriptkit"
@@ -979,8 +979,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-applescriptobjc"
@@ -1000,8 +1000,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-applicationservices"
@@ -1028,8 +1028,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-apptrackingtransparency"
@@ -1049,8 +1049,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-audiovideobridging"
@@ -1070,8 +1070,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-authenticationservices"
@@ -1093,8 +1093,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-automaticassessmentconfiguration"
@@ -1116,8 +1116,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-automator"
@@ -1137,8 +1137,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-avfoundation"
@@ -1163,8 +1163,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-avkit"
@@ -1187,8 +1187,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-avrouting"
@@ -1210,8 +1210,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-backgroundassets"
@@ -1233,8 +1233,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-businesschat"
@@ -1254,8 +1254,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-calendarstore"
@@ -1275,8 +1275,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-callkit"
@@ -1296,8 +1296,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-cfnetwork"
@@ -1319,8 +1319,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-classkit"
@@ -1342,8 +1342,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-cloudkit"
@@ -1366,8 +1366,8 @@ pyobjc-framework-CoreLocation = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-cocoa"
@@ -1392,8 +1392,8 @@ pyobjc-core = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-collaboration"
@@ -1413,8 +1413,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-colorsync"
@@ -1434,8 +1434,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-contacts"
@@ -1457,8 +1457,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-contactsui"
@@ -1481,8 +1481,8 @@ pyobjc-framework-Contacts = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-coreaudio"
@@ -1508,8 +1508,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-coreaudiokit"
@@ -1532,8 +1532,8 @@ pyobjc-framework-CoreAudio = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-corebluetooth"
@@ -1555,8 +1555,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-coredata"
@@ -1578,8 +1578,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-corehaptics"
@@ -1599,8 +1599,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-corelocation"
@@ -1622,8 +1622,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-coremedia"
@@ -1649,8 +1649,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-coremediaio"
@@ -1672,8 +1672,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-coremidi"
@@ -1695,8 +1695,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-coreml"
@@ -1718,8 +1718,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-coremotion"
@@ -1745,8 +1745,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-coreservices"
@@ -1768,8 +1768,8 @@ pyobjc-framework-FSEvents = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-corespotlight"
@@ -1791,8 +1791,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-coretext"
@@ -1819,8 +1819,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-corewlan"
@@ -1842,8 +1842,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-cryptotokenkit"
@@ -1865,8 +1865,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-datadetection"
@@ -1886,8 +1886,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-devicecheck"
@@ -1907,8 +1907,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-dictionaryservices"
@@ -1928,8 +1928,8 @@ pyobjc-framework-CoreServices = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-discrecording"
@@ -1951,8 +1951,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-discrecordingui"
@@ -1973,8 +1973,8 @@ pyobjc-framework-DiscRecording = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-diskarbitration"
@@ -1994,8 +1994,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-dvdplayback"
@@ -2015,8 +2015,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-eventkit"
@@ -2036,8 +2036,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-exceptionhandling"
@@ -2057,8 +2057,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-executionpolicy"
@@ -2078,8 +2078,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-extensionkit"
@@ -2101,8 +2101,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-externalaccessory"
@@ -2124,8 +2124,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-fileprovider"
@@ -2151,8 +2151,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-fileproviderui"
@@ -2172,8 +2172,8 @@ pyobjc-framework-FileProvider = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-findersync"
@@ -2193,8 +2193,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-fsevents"
@@ -2216,8 +2216,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-gamecenter"
@@ -2239,8 +2239,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-gamecontroller"
@@ -2262,8 +2262,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-gamekit"
@@ -2286,8 +2286,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-gameplaykit"
@@ -2310,8 +2310,8 @@ pyobjc-framework-SpriteKit = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-healthkit"
@@ -2333,8 +2333,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-imagecapturecore"
@@ -2356,8 +2356,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-imserviceplugin"
@@ -2379,8 +2379,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-inputmethodkit"
@@ -2402,8 +2402,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-installerplugins"
@@ -2423,8 +2423,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-instantmessage"
@@ -2445,8 +2445,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-intents"
@@ -2468,8 +2468,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-intentsui"
@@ -2495,8 +2495,8 @@ pyobjc-framework-Intents = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-iobluetooth"
@@ -2518,8 +2518,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-iobluetoothui"
@@ -2539,8 +2539,8 @@ pyobjc-framework-IOBluetooth = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-iosurface"
@@ -2560,8 +2560,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-ituneslibrary"
@@ -2581,8 +2581,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-kernelmanagement"
@@ -2602,8 +2602,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-latentsemanticmapping"
@@ -2623,8 +2623,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-launchservices"
@@ -2644,8 +2644,8 @@ pyobjc-framework-CoreServices = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-libdispatch"
@@ -2670,8 +2670,8 @@ pyobjc-core = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-libxpc"
@@ -2696,8 +2696,8 @@ pyobjc-core = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-linkpresentation"
@@ -2718,8 +2718,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-localauthentication"
@@ -2740,8 +2740,8 @@ pyobjc-framework-Security = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-localauthenticationembeddedui"
@@ -2762,8 +2762,8 @@ pyobjc-framework-LocalAuthentication = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-mailkit"
@@ -2783,8 +2783,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-mapkit"
@@ -2808,8 +2808,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-mediaaccessibility"
@@ -2829,8 +2829,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-medialibrary"
@@ -2851,8 +2851,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-mediaplayer"
@@ -2872,8 +2872,8 @@ pyobjc-framework-AVFoundation = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-mediatoolbox"
@@ -2895,8 +2895,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-metal"
@@ -2918,8 +2918,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-metalfx"
@@ -2941,8 +2941,8 @@ pyobjc-framework-Metal = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-metalkit"
@@ -2965,8 +2965,8 @@ pyobjc-framework-Metal = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-metalperformanceshaders"
@@ -2988,8 +2988,8 @@ pyobjc-framework-Metal = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-metalperformanceshadersgraph"
@@ -3009,8 +3009,8 @@ pyobjc-framework-MetalPerformanceShaders = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-metrickit"
@@ -3036,8 +3036,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-mlcompute"
@@ -3057,8 +3057,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-modelio"
@@ -3081,8 +3081,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-multipeerconnectivity"
@@ -3104,8 +3104,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-naturallanguage"
@@ -3125,8 +3125,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-netfs"
@@ -3146,8 +3146,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-network"
@@ -3169,8 +3169,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-networkextension"
@@ -3192,8 +3192,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-notificationcenter"
@@ -3215,8 +3215,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-opendirectory"
@@ -3236,8 +3236,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-osakit"
@@ -3257,8 +3257,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-oslog"
@@ -3282,8 +3282,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-passkit"
@@ -3305,8 +3305,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-pencilkit"
@@ -3326,8 +3326,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-phase"
@@ -3347,8 +3347,8 @@ pyobjc-framework-AVFoundation = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-photos"
@@ -3370,8 +3370,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-photosui"
@@ -3393,8 +3393,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-preferencepanes"
@@ -3414,8 +3414,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-pubsub"
@@ -3435,8 +3435,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-pushkit"
@@ -3458,8 +3458,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-quartz"
@@ -3485,8 +3485,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-quicklookthumbnailing"
@@ -3507,8 +3507,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-replaykit"
@@ -3530,8 +3530,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-safariservices"
@@ -3553,8 +3553,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-safetykit"
@@ -3577,8 +3577,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-scenekit"
@@ -3601,8 +3601,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-screencapturekit"
@@ -3628,8 +3628,8 @@ pyobjc-framework-CoreMedia = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-screensaver"
@@ -3651,8 +3651,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-screentime"
@@ -3672,8 +3672,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-scriptingbridge"
@@ -3695,8 +3695,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-searchkit"
@@ -3716,8 +3716,8 @@ pyobjc-framework-CoreServices = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-security"
@@ -3743,8 +3743,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-securityfoundation"
@@ -3765,8 +3765,8 @@ pyobjc-framework-Security = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-securityinterface"
@@ -3789,8 +3789,8 @@ pyobjc-framework-Security = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-servicemanagement"
@@ -3810,8 +3810,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-sharedwithyou"
@@ -3833,8 +3833,8 @@ pyobjc-framework-SharedWithYouCore = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-sharedwithyoucore"
@@ -3856,8 +3856,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-shazamkit"
@@ -3883,8 +3883,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-social"
@@ -3904,8 +3904,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-soundanalysis"
@@ -3925,8 +3925,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-speech"
@@ -3948,8 +3948,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-spritekit"
@@ -3976,8 +3976,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-storekit"
@@ -3999,8 +3999,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-syncservices"
@@ -4023,8 +4023,8 @@ pyobjc-framework-CoreData = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-systemconfiguration"
@@ -4046,8 +4046,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-systemextensions"
@@ -4069,8 +4069,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-threadnetwork"
@@ -4090,8 +4090,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-uniformtypeidentifiers"
@@ -4111,8 +4111,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-usernotifications"
@@ -4134,8 +4134,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-usernotificationsui"
@@ -4156,8 +4156,8 @@ pyobjc-framework-UserNotifications = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-videosubscriberaccount"
@@ -4177,8 +4177,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-videotoolbox"
@@ -4202,8 +4202,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-virtualization"
@@ -4225,8 +4225,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-vision"
@@ -4250,8 +4250,8 @@ pyobjc-framework-Quartz = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyobjc-framework-webkit"
@@ -4273,8 +4273,8 @@ pyobjc-framework-Cocoa = ">=9.2"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyside6"
@@ -4299,8 +4299,8 @@ shiboken6 = "6.4.3"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyside6-addons"
@@ -4324,8 +4324,8 @@ shiboken6 = "6.4.3"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyside6-essentials"
@@ -4348,19 +4348,19 @@ shiboken6 = "6.4.3"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pyside6-fluent-widgets"
-version = "0.9.10"
+version = "1.0.0"
 description = "A fluent design widgets library based on PySide6"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "PySide6-Fluent-Widgets-0.9.10.tar.gz", hash = "sha256:cc7a70fb3a4f416f551beafd3b19ca8105509ffec9a8d5570ad9126570944aaf"},
-    {file = "PySide6_Fluent_Widgets-0.9.10-py3-none-any.whl", hash = "sha256:06e7ec47e1c9edf74eb1eafc91e1845cb7f27920542dfa36b2acef888d71a22a"},
+    {file = "PySide6-Fluent-Widgets-1.0.0.tar.gz", hash = "sha256:88c6116c536eb7f385203b70d7ea7d1e48563f0631a6d9c563690507c0ab9ed0"},
+    {file = "PySide6_Fluent_Widgets-1.0.0-py3-none-any.whl", hash = "sha256:9605fafd60c8e95efa15ad265ef5ae5f28c48dd67c640c4b69948d5a59b75455"},
 ]
 
 [package.dependencies]
@@ -4373,8 +4373,8 @@ full = ["colorthief", "pillow", "scipy"]
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pysidesix-frameless-window"
@@ -4395,8 +4395,8 @@ pywin32 = {version = "*", markers = "platform_system == \"Windows\""}
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "python-xlib"
@@ -4415,8 +4415,8 @@ six = ">=1.10.0"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "pywin32"
@@ -4444,8 +4444,8 @@ files = [
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "regex"
@@ -4547,8 +4547,8 @@ files = [
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "requests"
@@ -4574,8 +4574,8 @@ use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "shiboken6"
@@ -4595,8 +4595,8 @@ files = [
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "six"
@@ -4612,8 +4612,8 @@ files = [
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "tiktoken"
@@ -4663,8 +4663,8 @@ blobfile = ["blobfile (>=2)"]
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "tqdm"
@@ -4689,8 +4689,8 @@ telegram = ["requests"]
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "urllib3"
@@ -4712,8 +4712,8 @@ zstd = ["zstandard (>=0.18.0)"]
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [[package]]
 name = "yarl"
@@ -4805,10 +4805,10 @@ multidict = ">=4.0"
 
 [package.source]
 type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "QingHua"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "AliYun"
 
 [metadata]
 lock-version = "2.0"
 python-versions = "<3.12,>=3.10"
-content-hash = "f98adbf3beb619e19261018227326ba8583ba62f67b1cb3b99990118b7ba8deb"
+content-hash = "d732ea2b1c709696bdcc40947f360d83f39dda3980371072fc12115d6ea357a6"

@@ -81,7 +81,11 @@ class CommandTextEdit(PlainTextEdit):
             # if cursor is already at the last line, emit signal
             if self.textCursor().blockNumber() == self.document().blockCount() - 1:
                 self.GO_BEYOND_END_OF_DOCUMENT_SIGNAL.emit()
-
+        # let command window to handle ctrl+c when user does not select anything
+        elif event.key() == Qt.Key_C and event.modifiers() == Qt.ControlModifier:
+            if not self.textCursor().hasSelection():
+                self.parent().keyPressEvent(event)
+                return
         super().keyPressEvent(event)
 
     def _adjust_height(self):

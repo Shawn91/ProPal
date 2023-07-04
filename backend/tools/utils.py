@@ -1,3 +1,6 @@
+from enum import Enum
+
+
 def get_subsequences(seq, exclude_indices):
     """
     >>> get_subsequences('abcdef', [(1, 3), (4, 5)])
@@ -51,6 +54,50 @@ def find_positions_of_subsequence(seq, subseq, start=0, ignore_case=True):
         start = end
 
     return positions
+
+
+class OrderedEnum(Enum):
+    """each value is given an order based on its position in the class definition
+    Copied from https://stackoverflow.com/a/42397017
+    """
+
+    def __init__(self, *args):
+        try:
+            # attempt to initialize other parents in the hierarchy
+            super().__init__(*args)
+        except TypeError:
+            # ignore -- there are no other parents
+            pass
+        ordered = len(self.__class__.__members__) + 1
+        self._order = ordered
+
+    def __ge__(self, other):
+        if self.__class__ is other.__class__:
+            return self._order >= other._order
+        return NotImplemented
+
+    def __gt__(self, other):
+        if self.__class__ is other.__class__:
+            return self._order > other._order
+        return NotImplemented
+
+    def __le__(self, other):
+        if self.__class__ is other.__class__:
+            return self._order <= other._order
+        return NotImplemented
+
+    def __lt__(self, other):
+        if self.__class__ is other.__class__:
+            return self._order < other._order
+        return NotImplemented
+
+    @classmethod
+    def members(cls):
+        return sorted([member for member in cls], key=lambda x: x._order)
+
+    @classmethod
+    def values(cls):
+        return [member.value for member in cls.members()]
 
 
 if __name__ == "__main__":

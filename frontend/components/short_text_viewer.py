@@ -1,4 +1,5 @@
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QKeyEvent
 from PySide6.QtWidgets import QLabel
 
 from backend.tools.markdown_parser import MarkdownParser
@@ -44,3 +45,11 @@ class ShortTextViewer(QLabel):
 
     def reset_widget(self):
         self.set_text(text="", text_format="html")
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        # let parent handle ctrl+c when no text is selected
+        if event.key() == Qt.Key_C and event.modifiers() == Qt.ControlModifier:
+            if not self.hasSelectedText():
+                self.parent().keyPressEvent(event)
+                return
+        super().keyPressEvent(event)

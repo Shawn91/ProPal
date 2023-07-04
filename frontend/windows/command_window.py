@@ -14,7 +14,8 @@ from frontend.commands import Command
 from frontend.components.command_result_list import CommandResultList
 # from frontend.windows.base import FramelessWindow
 from frontend.components.command_text_edit import CommandTextEdit
-from frontend.components.dialogs import StringTemplateFillingDialog
+from frontend.components.copy_commands import CopyLLMResponseCommandsDialog
+from frontend.components.form_dialogs import StringTemplateFillingDialog
 from frontend.components.short_text_viewer import ShortTextViewer
 from frontend.hotkey_manager import hotkey_manager
 from setting.setting_reader import setting
@@ -87,6 +88,14 @@ class CommandWindow(FramelessWindow):
         """override hideEvent to reset the search window when it is hidden"""
         self.reset_widget()
         super().hideEvent(event)
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_C and event.modifiers() == Qt.ControlModifier:
+            if isinstance(self.result_container.widget(), ShortTextViewer):
+                dialog = CopyLLMResponseCommandsDialog(
+                    target_widget=self.result_container.widget(), relative_position="left", parent=self
+                )
+                dialog.show()
 
     def show(self):
         """It seems Qt.Tool doesn't accept focus automatically, so we need to manually activate the window.
