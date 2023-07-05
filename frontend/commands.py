@@ -1,6 +1,7 @@
 from typing import List
 
 from PySide6.QtCore import QTranslator
+from PySide6.QtWidgets import QApplication
 
 from backend.models import Match
 from frontend.components.form_dialogs import NewPromptFormDialog, LLMConnectionFormDialog
@@ -43,6 +44,15 @@ class SetOpenAIKeyCommand(Command):
     def execute(parent):
         dialog = LLMConnectionFormDialog(parent=parent)
         dialog.exec()
+
+
+class QuitApplicationCommand(Command):
+    name = "QuitApplication"
+    display_name = QTranslator.tr("Quit")
+
+    @staticmethod
+    def execute(parent):
+        QApplication.instance().quit()
 
 
 class CommandManager:
