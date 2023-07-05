@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QListWidgetItem
 from qfluentwidgets import ListWidget
 
 from backend.models import Match
+from frontend.hotkey_manager import hotkey_manager
 from setting.setting_reader import setting
 
 
@@ -57,6 +58,7 @@ class CommandResultList(ListWidget):
         self.search_str = search_str
         self.fixed_width = width
         self.setup_ui()
+        self.connect_hotkey()
         if matches:
             self.load_list_items(matches=self.matches, search_str=self.search_str)
 
@@ -65,6 +67,10 @@ class CommandResultList(ListWidget):
             self.GO_BEYOND_START_OF_LIST_SIGNAL.emit()
         else:
             super().keyPressEvent(event)
+
+    def connect_hotkey(self):
+        delete_hotkey = hotkey_manager.delete_hotkey.create_shortcut(parent=self)
+        delete_hotkey.activated.connect(self.delete_prompt)
 
     def setup_ui(self):
         self.setStyleSheet("background-color:white;")
@@ -117,7 +123,7 @@ class CommandResultList(ListWidget):
         if len(text) < setting.get("MAXIMUM_DISPLAY_LENGTH_IN_SEARCH_RESULT"):
             return text
         half_length = int(setting.get("MAXIMUM_DISPLAY_LENGTH_IN_SEARCH_RESULT") / 2)
-        
+
         start = max(0, center_position - half_length)
         end = min(len(text), center_position + half_length)
         # if one side is shorter than half of the maximum length, then extend the other side
@@ -131,3 +137,15 @@ class CommandResultList(ListWidget):
         if end < len(text):
             cutoff_text = cutoff_text + " ..."
         return cutoff_text
+
+    def delete_prompt(self):
+        if not self.hasFocus():
+            return
+        item = self.currentItem()
+        match = item.data(Qt.UserRole)
+        if not match.category == "prompt":
+            return
+        match.data.delete_instance()
+        self.takeItem(self.currentRow())
+        self.matches.remove(match)
+        self.update()

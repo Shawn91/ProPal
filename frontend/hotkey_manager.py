@@ -34,6 +34,8 @@ class HotkeyManager(QObject):
 
     save_hotkey = HotkeyCombination(["Ctrl", "Return"])
 
+    delete_hotkey = HotkeyCombination(["Delete"])
+
     global_hotkey_listener: Listener = None
 
     def __init__(self):
