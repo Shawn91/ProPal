@@ -49,6 +49,18 @@ class ModelWithTags:
         return tags
 
 
+class _Meta(pw.Model):
+    """model that stores info about the database schema"""
+    version = pw.IntegerField(default=1)
+
+    id = pw.UUIDField(primary_key=True, default=uuid.uuid4)
+    created_at = pw.DateTimeField(default=datetime.now)
+    updated_at = pw.DateTimeField(default=datetime.now)
+
+    class Meta:
+        database = db
+
+
 class Prompt(pw.Model, ModelWithTags):
     """
     Note: when we update the content of a prompt instance and call prompt.save(),
@@ -154,14 +166,18 @@ class ChatMessage(pw.Model):
 
 
 class DBManager:
-    MODELS = {"prompt": Prompt}
+    MODELS = {"prompt": Prompt, "_meta": _Meta}
 
     def __init__(self):
         self._create_tables()
 
     def _create_tables(self):
         """only create tables once"""
-        db.create_tables([Prompt])
+        db.create_tables(self.MODELS.values())
+
+        meta_info = _Meta.select().first()
+        if not meta_info:
+            _Meta.create(version=1)
 
     def search_by_string(self, search_str, in_models: Optional[List[str]] = None) -> List[Match]:
         if in_models is None:
