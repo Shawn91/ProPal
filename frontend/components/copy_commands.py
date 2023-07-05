@@ -1,21 +1,24 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QListWidgetItem, QVBoxLayout, QLabel
+from PySide6.QtGui import QClipboard
+from PySide6.QtWidgets import QListWidgetItem, QVBoxLayout
 from qfluentwidgets import ListWidget
 from qframelesswindow import FramelessDialog
 
+from backend.tools.markdown_parser import MarkdownParser
 from backend.tools.utils import OrderedEnum
+from frontend.components.short_text_viewer import ShortTextViewer
 from setting.setting_reader import setting
 
 
 class Commands(str, OrderedEnum):
     COPY_RESPONSE = "Copy Response"
-    COPY_RESPONSE_AS_HTML = "Copy Response As HTML"
-    COPY_ALL_CODE_BLOCKS = "Copy All Code Blocs"
-    COPY_ALL_TABLES = "Copy All Tables"
+    COPY_CODE_BLOCKS = "Copy Code Blocs"
+    COPY_TABLES_AS_CSV = "Copy Tables As CSV"
+    COPY_TABLES_AS_MARKDOWN = "Copy Tables As Markdown"
 
 
 class CopyLLMResponseCommandsDialog(FramelessDialog):
-    def __init__(self, target_widget: QLabel, relative_position="left", parent=None):
+    def __init__(self, target_widget: ShortTextViewer, relative_position="left", parent=None):
         """
         this widget should be displayed alongside the target_widget and controls how to copy content of
             the target_widget
@@ -57,6 +60,16 @@ class CopyLLMResponseCommandsDialog(FramelessDialog):
             raise ValueError(f"relative_position must be either 'left' or 'right', not {self.relative_position}")
 
     def handle_command_activated(self, item):
-        content = self.target_widget.text()
-
+        clipboard = QClipboard()
+        if item.text() == Commands.COPY_RESPONSE:
+            clipboard.setText(self.target_widget.raw_text)
+        elif item.text() == Commands.COPY_CODE_BLOCKS:
+            code_blocks = MarkdownParser.extract_code_blocks(self.target_widget.raw_text)
+            clipboard.setText('\n\n'.join(code_blocks))
+        elif item.text() == Commands.COPY_TABLES_AS_CSV:
+            tables = MarkdownParser.extract_tables(self.target_widget.raw_text, output_format="csv")
+            clipboard.setText('\n\n'.join(tables))
+        elif item.text() == Commands.COPY_TABLES_AS_MARKDOWN:
+            tables = MarkdownParser.extract_tables(self.target_widget.raw_text, output_format="markdown")
+            clipboard.setText('\n\n'.join(tables))
         self.close()

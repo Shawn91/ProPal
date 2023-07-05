@@ -14,13 +14,27 @@ class ShortTextViewer(QLabel):
     markdown_parser = MarkdownParser(custom_style=f'div, p {{font-size: {setting.get("FONT_SIZE")}px}}')
 
     def __init__(self, text: str = "", text_format="markdown", parent=None):
+        """
+
+        :param text: could be plain text, html, or markdown
+        :param text_format: plaint, markdown, html. this is the format of the text, not what is shown
+        """
         super().__init__(parent=parent)
         self.setup_ui()
 
-        self.text_format = ""
-        self.text = ""
-        if self.text:
+        self._text_format = ""
+        self._text = ""  # not to be confused with self.text(). This is the original text. self.text() is the shown text
+        self._html = text if text_format == "html" else ""
+        if self._text:
             self.set_text(text=text, text_format=text_format)
+
+    @property
+    def raw_text(self):
+        return self._text
+
+    @property
+    def html(self):
+        return self._html
 
     def setup_ui(self):
         self.setFont(setting.default_font)
@@ -35,16 +49,20 @@ class ShortTextViewer(QLabel):
         )
 
     def set_text(self, text: str, text_format="markdown"):
-        self.text = text
-        self.text_format = text_format
+        self._text = text
+        self._text_format = text_format
         if text_format == "markdown":
-            self.setText(self.markdown_parser.to_html(self.text))
+            self._html = self.markdown_parser.to_html(self._text)
+            self.setText(self._html)
         else:
+            if text_format == "html":
+                self._html = text
             self.setText(text)
         self.adjustSize()
 
     def reset_widget(self):
         self.set_text(text="", text_format="html")
+        self._html = ""
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         # let parent handle ctrl+c when no text is selected

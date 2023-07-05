@@ -8,17 +8,24 @@ monokai is the theme for code styling. we can use `pygmentize -L style` to see a
 
 Remember to delete `pre { line-height: 125%; }` in the generated css file because it causes QLabel to display html poorly.
 """
+import csv
+from io import StringIO
+from typing import List
 
 import markdown
 from markdown.extensions.codehilite import CodeHiliteExtension
-from markdown.extensions.fenced_code import FencedCodeExtension
+from markdown.extensions.fenced_code import FencedCodeExtension, FencedBlockPreprocessor
+from markdown.extensions.tables import TableExtension
 
 from setting.setting_reader import setting
 
 
 class MarkdownParser:
+    markdown_instance = markdown.Markdown(
+        extensions=[FencedCodeExtension(), CodeHiliteExtension(), TableExtension(use_align_attribute=True)]
+    )
+
     def __init__(self, custom_style: str = ""):
-        self.markdown_instance = markdown.Markdown(extensions=[FencedCodeExtension(), CodeHiliteExtension()])
         self.style = self._load_style(custom_style=custom_style)
 
     @staticmethod
@@ -45,3 +52,69 @@ class MarkdownParser:
         {html}
         """
         return final_html
+
+    @staticmethod
+    def extract_code_blocks(markdown_text) -> List[str]:
+        """Extract code blocks from markdown text.
+        this code is modified from markdown.extensions.fenced_code.FencedBlockPreprocessor.run method
+        """
+        code_blocks = []
+        pat = FencedBlockPreprocessor.FENCED_BLOCK_RE
+        while True:
+            m = pat.search(markdown_text)
+            if m:
+                code = m.group("code")
+                code_blocks.append(code)
+                markdown_text = markdown_text[m.end():]
+            else:
+                break
+        return code_blocks
+
+    @classmethod
+    def extract_tables(cls, markdown_text, output_format="csv") -> List[str]:
+        tables = []
+        blocks = markdown_text.split("\n\n")
+        table_processor = cls.markdown_instance.parser.blockprocessors["table"]
+        for block in blocks:
+            if table_processor.test(parent=None, block=block):
+                if output_format == "markdown":
+                    tables.append(block)
+                else:  # csv
+                    table = []
+                    rows = block.split("\n")
+                    table.append([cell.strip() for cell in table_processor._split_row(rows[0])])
+                    for row in rows[2:]:
+                        cells = [cell.strip() for cell in table_processor._split_row(row)]
+                        table.append(cells)
+                    csv_file = StringIO()
+                    csv_writer = csv.writer(csv_file)
+                    csv_writer.writerows(table)
+                    tables.append(csv_file.getvalue())
+        return tables
+
+
+if __name__ == "__main__":
+    markdown_parser = MarkdownParser()
+    codes = markdown_parser.extract_tables(
+        """
+# 你好
+你好
+```python
+def a():
+    return 1
+```
+
+```javascript
+function a() {
+    return 1;
+}
+```
+
+| Syntax      | Description | Test Text     |
+| :---        |    :----:   |          ---: |
+| Header      | Title       | Here's this   |
+| Paragraph   | Text        | And more      |
+
+"""
+    )
+    print(codes[0])
