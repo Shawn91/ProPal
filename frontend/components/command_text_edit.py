@@ -1,4 +1,3 @@
-from PySide6 import QtWidgets
 from PySide6.QtCore import Qt, QTranslator, Signal
 from PySide6.QtGui import QKeyEvent
 from qfluentwidgets import PlainTextEdit
@@ -26,20 +25,16 @@ class CommandTextEdit(PlainTextEdit):
             TextEdit.document().size().height() returns the actual height of the widget.
         """
         line_count = 1 if self.document().lineCount() == 0 else self.document().lineCount()
-        return self.fontMetrics().lineSpacing() * line_count + self.PADDING * 2
+        return self.fontMetrics().lineSpacing() * line_count + self.PADDING * 2 + 10
 
     def setup_ui(self):
         self.setFont(setting.default_font)
-        policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        self.setSizePolicy(policy)
         self.setStyleSheet(
             f"""
             padding: {self.PADDING}px; 
             background-color:white;
             """
         )
-
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # disable vertical scroll bar
 
     def reset_widget(self):
         self.clear()

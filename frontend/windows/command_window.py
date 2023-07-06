@@ -79,6 +79,7 @@ class CommandWindow(FramelessWindow):
         self.retriever_agent = RetrieverAgent()
 
         self.result_container_maximum_height = QApplication.instance().primaryScreen().size().height() * 0.5
+        self.input_container_maximum_height = QApplication.instance().primaryScreen().size().height() * 0.25
 
         self.setup_ui()
         self.connect_hotkey()
@@ -120,7 +121,7 @@ class CommandWindow(FramelessWindow):
             lambda: self._move_focus(from_widget=self.text_edit, to_widget=self.result_container)
         )
         self.text_edit.textChanged.connect(self._search)
-        self.text_edit.textChanged.connect(self._adjust_height)
+        self.text_edit.textChanged.connect(self._adjust_input_container_height)
         self.result_list.GO_BEYOND_START_OF_LIST_SIGNAL.connect(
             lambda: self._move_focus(from_widget=self.result_list, to_widget=self.text_edit)
         )
@@ -204,9 +205,12 @@ class CommandWindow(FramelessWindow):
         if to_widget:
             to_widget.setFocus()
 
-    def _adjust_height(self):
+    def _adjust_input_container_height(self):
         """adjust the height of the window to fit the content"""
-        self.input_container.setFixedHeight(self.text_edit.height_by_content + 10)
+        original_height = self.input_container.height()
+        self.input_container.setFixedHeight(min(self.input_container_maximum_height, self.text_edit.height_by_content))
+        height_diff = self.input_container.height() - original_height
+        self.move(self.x(), self.y() - height_diff)
 
     def set_widget_in_result_container(self, widget: Optional[QWidget], allow_horizontal_scrollbar: bool = False):
         if widget:

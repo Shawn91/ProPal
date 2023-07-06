@@ -51,6 +51,7 @@ class ModelWithTags:
 
 class _Meta(pw.Model):
     """model that stores info about the database schema"""
+
     version = pw.IntegerField(default=1)
 
     id = pw.UUIDField(primary_key=True, default=uuid.uuid4)
@@ -186,6 +187,8 @@ class DBManager:
         result = []
         for model_name, model_class in self.MODELS.items():
             if in_models and model_class not in in_models:
+                continue
+            if model_name in ["_meta"]:
                 continue
             result.extend(model_class.search_by_string(search_str))
         return result
