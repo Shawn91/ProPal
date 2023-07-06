@@ -11,7 +11,11 @@ class ShortTextViewer(QLabel):
     If source text is markdown, it will be converted to html and shown.
     """
 
-    markdown_parser = MarkdownParser(custom_style=f'div, p {{font-size: {setting.get("FONT_SIZE")}px}}')
+    markdown_parser = MarkdownParser(
+        # somehow, the font size is relatively small in QLabel. So we increase it by 4px
+        custom_style=f'div, p {{font-size: {setting.get("FONT_SIZE") + 4}px; '
+        f'font-family: {setting.get("FONT_FAMILY")}}};'
+    )
 
     def __init__(self, text: str = "", text_format="markdown", parent=None):
         """

@@ -285,6 +285,9 @@ class CommandWindow(FramelessWindow):
         else:
             raise ValueError(f"Unknown type of chunk: {type(response)}")
 
+        # keep the scroll bar always at the end
+        self.result_container.verticalScrollBar().setValue(self.result_container.verticalScrollBar().maximum())
+
     def _search(self):
         text = self.text_edit.toPlainText()
         if text.strip() == "":
