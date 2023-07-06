@@ -14,8 +14,8 @@ from frontend.commands import Command
 from frontend.components.command_result_list import CommandResultList
 # from frontend.windows.base import FramelessWindow
 from frontend.components.command_text_edit import CommandTextEdit
-from frontend.components.copy_commands import CopyLLMResponseCommandsDialog
 from frontend.components.form_dialogs import StringTemplateFillingDialog
+from frontend.components.llm_response_commands import LLMResponseDialog
 from frontend.components.short_text_viewer import ShortTextViewer
 from frontend.hotkey_manager import hotkey_manager
 from setting.setting_reader import setting
@@ -63,7 +63,7 @@ class LLMRequestThread(QThread):
 
 
 class CommandWindow(FramelessWindow):
-    WIDTH = 1000  # width of the window
+    WIDTH = 800  # width of the window
 
     def __init__(self):
         super().__init__()
@@ -93,9 +93,13 @@ class CommandWindow(FramelessWindow):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_C and event.modifiers() == Qt.ControlModifier:
             if isinstance(self.result_container.widget(), ShortTextViewer):
-                dialog = CopyLLMResponseCommandsDialog(
-                    target_widget=self.result_container.widget(), relative_position="left", parent=self
+                dialog = LLMResponseDialog(
+                    target_widget=self.result_container.widget(),
+                    user_input=self.text_edit.toPlainText(),
+                    relative_position="left",
+                    parent=self,
                 )
+                dialog.OPEN_BROWSER_SIGNAL.connect(self.hide)
                 dialog.show()
 
     def show(self):

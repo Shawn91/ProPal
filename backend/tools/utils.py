@@ -56,7 +56,21 @@ def find_positions_of_subsequence(seq, subseq, start=0, ignore_case=True):
     return positions
 
 
-class OrderedEnum(Enum):
+class CustomEnum(Enum):
+    @classmethod
+    def has_value(cls, value):
+        return value in cls._value2member_map_
+
+    @classmethod
+    def members(cls):
+        return sorted([member for member in cls], key=lambda x: x._order)
+
+    @classmethod
+    def values(cls):
+        return [member.value for member in cls.members()]
+
+
+class OrderedEnum(CustomEnum):
     """each value is given an order based on its position in the class definition
     Copied from https://stackoverflow.com/a/42397017
     """
@@ -90,14 +104,6 @@ class OrderedEnum(Enum):
         if self.__class__ is other.__class__:
             return self._order < other._order
         return NotImplemented
-
-    @classmethod
-    def members(cls):
-        return sorted([member for member in cls], key=lambda x: x._order)
-
-    @classmethod
-    def values(cls):
-        return [member.value for member in cls.members()]
 
 
 if __name__ == "__main__":

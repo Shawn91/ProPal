@@ -22,17 +22,26 @@ MODEL_INFO = {
     }
 }
 
+DEFAULT_PROMPTS = {
+    "REVISE_FOR_SEARCH":
+        "Revise the following text in its own language to create an effective Google search query. "
+        "Be sure to include specific details or criteria to refine the search and find the most relevant results. "
+        "Output nothing but the revised query. The text is:\n"
+}
+
 
 class LLMTrigger(BaseTrigger):
     def __init__(
-        self,
-        content: str = "",
-        model_name=Model.GPT_3_5_TURBO,
-        conversation_id: str = "",
-        temperature: float = 0.5,
+            self,
+            content: str = "",
+            stream: bool = True,
+            model_name=Model.GPT_3_5_TURBO,
+            conversation_id: str = "",
+            temperature: float = 0.5,
     ):
         super().__init__(content=content)  # input to model
         self.model_name = model_name
+        self.stream = stream
         self.conversation_id = conversation_id
         self.history = []  # history of conversation
         self.temperature = temperature
@@ -40,6 +49,7 @@ class LLMTrigger(BaseTrigger):
     def to_dict(self):
         return {
             "content": self.content,
+            "stream": self.stream,
             "prompt": {} if self.prompt is None else self.prompt.to_dict(),
             "model_name": self.model_name,
             "conversation_id": self.conversation_id,
@@ -50,12 +60,12 @@ class LLMTrigger(BaseTrigger):
 
 class LLMResult(BaseResult):
     def __init__(
-        self,
-        trigger: LLMTrigger,
-        content: str = "",
-        success: bool = True,
-        error: Optional[Error] = None,
-        error_message: str = "",
+            self,
+            trigger: LLMTrigger,
+            content: str = "",
+            success: bool = True,
+            error: Optional[Error] = None,
+            error_message: str = "",
     ):
         super().__init__(trigger=trigger, content=content, success=success, error=error, error_message=error_message)
         self.input_token_usage = 0
@@ -64,8 +74,8 @@ class LLMResult(BaseResult):
     @property
     def cost(self) -> float:
         return (
-            self.input_token_usage / 1000 * MODEL_INFO[self.trigger.model_name]["unit_price_input"]
-            + self.output_token_usage / 1000 * MODEL_INFO[self.trigger.model_name]["unit_price_output"]
+                self.input_token_usage / 1000 * MODEL_INFO[self.trigger.model_name]["unit_price_input"]
+                + self.output_token_usage / 1000 * MODEL_INFO[self.trigger.model_name]["unit_price_output"]
         )
 
     def to_dict(self):
@@ -93,16 +103,20 @@ class LLMAgent(BaseAgent):
     def warm_up(self, trigger_attrs: Dict):
         if trigger_attrs.get("prompt"):
             prompt = trigger_attrs["prompt"] + "\n" + trigger_attrs["user_input"]
+        elif trigger_attrs.get("prompt_name"):
+            prompt = DEFAULT_PROMPTS[trigger_attrs["prompt_name"]] + "\n" + trigger_attrs["user_input"]
         else:
             prompt = trigger_attrs["user_input"]
-        trigger = self.TRIGGER_CLASS(content=prompt)
+        trigger = self.TRIGGER_CLASS(content=prompt, stream=trigger_attrs.get("stream", True))
         return trigger, self.RESULT_CLASS(trigger=trigger)
 
     def do(self, trigger: LLMTrigger, result: LLMResult):
-        return self.chat(trigger=trigger, result=result)
+        if trigger.stream:
+            return self.stream_chat(trigger=trigger, result=result)
+        else:
+            return self.chat(trigger=trigger, result=result)
 
-    # @staticmethod
-    def chat(self, trigger: LLMTrigger, result: LLMResult, cutoff_value=6) -> Iterator[str | LLMResult]:
+    def stream_chat(self, trigger: LLMTrigger, result: LLMResult, cutoff_value=6) -> Iterator[str | LLMResult]:
         token_encoding = tiktoken.encoding_for_model(trigger.model_name)
         complete_message = ""
         collected_message = ""
@@ -110,7 +124,7 @@ class LLMAgent(BaseAgent):
             model=trigger.model_name,
             messages=trigger.history + [{"role": "user", "content": trigger.content}],
             temperature=trigger.temperature,
-            stream=True,
+            stream=trigger.stream,
         )
         for chunk in res:
             collected_message += chunk["choices"][0]["delta"].get("content", "")  # extract the message
@@ -137,6 +151,28 @@ class LLMAgent(BaseAgent):
         )
         yield result
 
+    def chat(self, trigger: LLMTrigger, result: LLMResult):
+        token_encoding = tiktoken.encoding_for_model(trigger.model_name)
+        res = self.openai.ChatCompletion.create(
+            model=trigger.model_name,
+            messages=trigger.history + [{"role": "user", "content": trigger.content}],
+            temperature=trigger.temperature,
+            stream=trigger.stream,
+        )
+        message = res["choices"][0].message.content
+        input_token_usage, output_token_usage = self._calculate_token_usages(
+            encoding=token_encoding,
+            model_name=trigger.model_name,
+            history_messages=trigger.history + [{"role": "user", "content": trigger.content}],
+            reply_message=message,
+        )
+        result.set(
+            content=message,
+            input_token_usage=input_token_usage,
+            output_token_usage=output_token_usage,
+        )
+        return result
+
     @staticmethod
     def _calculate_token_usages(encoding, model_name, history_messages, reply_message) -> Tuple[int, int]:
         """see https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
@@ -158,7 +194,7 @@ class LLMAgent(BaseAgent):
 if __name__ == "__main__":
     agent = LLMAgent()
     trigger = LLMTrigger(content="count from 1 to 15")
-    chat_response = agent.chat(trigger=trigger, result=LLMResult(trigger=trigger))
+    chat_response = agent.stream_chat(trigger=trigger, result=LLMResult(trigger=trigger))
     while True:
         try:
             chunk = next(chat_response)

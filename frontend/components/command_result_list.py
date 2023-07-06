@@ -46,6 +46,7 @@ class TextMatchesSorter:
 
 class CommandResultList(ListWidget):
     # TODO: replace the parent of CommandResultList to list view and use custom ListItem to customize ui
+    # or use setCellWidget of QTableWidget, or setItemWidget of QListWidget
     GO_BEYOND_START_OF_LIST_SIGNAL = Signal()
 
     def __init__(self, matches: List[Match] = None, search_str: str = "", width=1000, parent=None):
