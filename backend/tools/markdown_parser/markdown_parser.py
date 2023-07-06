@@ -38,7 +38,24 @@ class MarkdownParser:
                     padding: 5px;
                 }
                """
-        style = code_style + custom_style
+            table_style = """
+            table {
+                border-collapse: collapse;
+            }
+            table td {
+                padding: 15px;
+                color: #636363;
+                border: 1px solid #dddfe1;
+            }
+            table thead th {
+                padding: 15px;
+                background-color: #54585d;
+                color: #ffffff;
+                font-weight: bold;
+                border: 1px solid #54585d;
+            }
+            """
+        style = code_style + table_style + custom_style
         return style
 
     def add_style(self, style: str):
@@ -65,7 +82,7 @@ class MarkdownParser:
             if m:
                 code = m.group("code")
                 code_blocks.append(code)
-                markdown_text = markdown_text[m.end():]
+                markdown_text = markdown_text[m.end() :]
             else:
                 break
         return code_blocks

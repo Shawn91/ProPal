@@ -13,7 +13,7 @@ class ShortTextViewer(QLabel):
 
     markdown_parser = MarkdownParser(
         # somehow, the font size is relatively small in QLabel. So we increase it by 4px
-        custom_style=f'div, p {{font-size: {setting.get("FONT_SIZE") + 4}px; '
+        custom_style=f'div, p, table {{font-size: {setting.get("FONT_SIZE") + 4}px; '
         f'font-family: {setting.get("FONT_FAMILY")}}};'
     )
 
