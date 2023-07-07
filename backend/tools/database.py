@@ -13,7 +13,7 @@ from setting.setting_reader import setting
 
 
 def create_db_connection():
-    return pw.SqliteDatabase(setting.root_path / "data/data.db")
+    return pw.SqliteDatabase(setting.root_path / "user_data/data.db")
 
 
 db = create_db_connection()
