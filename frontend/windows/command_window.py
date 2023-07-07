@@ -178,7 +178,6 @@ class CommandWindow(FramelessWindow):
             self._talk_to_ai()
 
     def _show_context_commands(self):
-        print("show context commands")
         if isinstance(self.result_container.widget(), ShortTextViewer):
             dialog = LLMResponseDialog(
                 target_widget=self.result_container.widget(),

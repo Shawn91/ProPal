@@ -1,3 +1,5 @@
+import string
+
 from PySide6.QtCore import Qt, QSize, Signal
 from PySide6.QtGui import QClipboard
 from PySide6.QtWidgets import QListWidgetItem, QVBoxLayout, QFrame
@@ -45,10 +47,14 @@ class LLMResponseDialog(FramelessDialog):
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         commands = [self.CopyCommands, self.SearchCommands]
+        global_idx = 0
         for command_idx, command in enumerate(commands):
             for command_text_idx, command_text in enumerate(command.values()):
-                item = QListWidgetItem(command_text, self.list_widget)
+                item = QListWidgetItem(f'{string.ascii_uppercase[global_idx]}. {command_text}', self.list_widget)
                 item.setFont(setting.default_font)
+                global_idx += 1
+                assert global_idx < 26, "too many commands"
+                item.setData(Qt.UserRole, global_idx)
                 # add bottom border to last item
                 if command_text_idx == len(command) - 1 and command_idx != len(commands) - 1:
                     border_item = QListWidgetItem(self.list_widget)
