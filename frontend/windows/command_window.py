@@ -90,18 +90,6 @@ class CommandWindow(FramelessWindow):
         self.reset_widget()
         super().hideEvent(event)
 
-    def keyPressEvent(self, event):
-        if event.key() == Qt.Key_C and event.modifiers() == Qt.ControlModifier:
-            if isinstance(self.result_container.widget(), ShortTextViewer):
-                dialog = LLMResponseDialog(
-                    target_widget=self.result_container.widget(),
-                    user_input=self.text_edit.toPlainText(),
-                    relative_position="left",
-                    parent=self,
-                )
-                dialog.OPEN_BROWSER_SIGNAL.connect(self.hide)
-                dialog.show()
-
     def show(self):
         """It seems Qt.Tool doesn't accept focus automatically, so we need to manually activate the window.
         This is desirable because we can now do some operations like copying the selected text to the clipboard
@@ -118,6 +106,8 @@ class CommandWindow(FramelessWindow):
         hotkey_manager.search_window_hotkey_pressed.connect(self.toggle_visibility)
         switch_mode_hotkey = hotkey_manager.switch_mode_hotkey.create_shortcut(parent=self)
         switch_mode_hotkey.activated.connect(self._switch_mode)
+        context_command_hotkey = hotkey_manager.context_command_hotkey.create_shortcut(parent=self)
+        context_command_hotkey.activated.connect(self._show_context_commands)
 
     def connect_signals(self):
         self.text_edit.CONFIRM_SIGNAL.connect(self._handle_text_edit_confirm)
@@ -186,6 +176,18 @@ class CommandWindow(FramelessWindow):
             self._execute_search_selection()
         elif self.mode == Mode.TALK:
             self._talk_to_ai()
+
+    def _show_context_commands(self):
+        print("show context commands")
+        if isinstance(self.result_container.widget(), ShortTextViewer):
+            dialog = LLMResponseDialog(
+                target_widget=self.result_container.widget(),
+                user_input=self.text_edit.toPlainText(),
+                relative_position="left",
+                parent=self,
+            )
+            dialog.OPEN_BROWSER_SIGNAL.connect(self.hide)
+            dialog.exec()
 
     def _switch_mode(self, to=None):
         """when to is None, it means stop doing whatever it is doing in the current mode"""

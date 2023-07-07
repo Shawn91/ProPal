@@ -4,7 +4,7 @@ All windows accept hotkeys from this manager.
 """
 from typing import List
 
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, Signal, Qt
 from PySide6.QtGui import QShortcut, QKeySequence
 from pynput.keyboard import GlobalHotKeys, Listener
 
@@ -12,8 +12,9 @@ MODIFIER_KEYS = ["ALT", "CTRL", "SHIFT", "ESC", "SPACE"]
 
 
 class HotkeyCombination:
-    def __init__(self, hotkey_seq: List[str]):
+    def __init__(self, hotkey_seq: List[str], q_key_sequence: QKeySequence | None = None):
         self.hotkey_seq = hotkey_seq
+        self.q_key_sequence = q_key_sequence
 
     def display(self) -> str:
         return "+".join(self.hotkey_seq)
@@ -22,6 +23,8 @@ class HotkeyCombination:
         return "+".join([f"<{key.upper()}>" if key.upper() in MODIFIER_KEYS else key for key in self.hotkey_seq])
 
     def create_shortcut(self, parent=None) -> QShortcut:
+        if self.q_key_sequence:
+            return QShortcut(self.q_key_sequence, parent)
         return QShortcut(QKeySequence.fromString(self.display()), parent)
 
 
@@ -33,6 +36,8 @@ class HotkeyManager(QObject):
     switch_mode_hotkey = HotkeyCombination(["ESC"])
 
     save_hotkey = HotkeyCombination(["Ctrl", "Return"])
+
+    context_command_hotkey = HotkeyCombination(["Ctrl", "."], q_key_sequence=QKeySequence(Qt.CTRL | Qt.Key_Period))
 
     delete_hotkey = HotkeyCombination(["Delete"])
 
