@@ -24,19 +24,19 @@ MODEL_INFO = {
 
 DEFAULT_PROMPTS = {
     "REVISE_FOR_SEARCH": "Revise the following text in its own language to create an effective Google search query. "
-    "Be sure to include specific details or criteria to refine the search and find the most relevant results. "
-    "Output nothing but the revised query. The text is:\n"
+                         "Be sure to include specific details or criteria to refine the search and find the most relevant results. "
+                         "Output nothing but the revised query. The text is:\n"
 }
 
 
 class LLMTrigger(BaseTrigger):
     def __init__(
-        self,
-        content: str = "",
-        stream: bool = True,
-        model_name=Model.GPT_3_5_TURBO,
-        conversation_id: str = "",
-        temperature: float = 0.5,
+            self,
+            content: str = "",
+            stream: bool = True,
+            model_name=Model.GPT_3_5_TURBO,
+            conversation_id: str = "",
+            temperature: float = 0.5,
     ):
         super().__init__(content=content)  # input to model
         self.model_name = model_name
@@ -59,12 +59,12 @@ class LLMTrigger(BaseTrigger):
 
 class LLMResult(BaseResult):
     def __init__(
-        self,
-        trigger: LLMTrigger,
-        content: str = "",
-        success: bool = True,
-        error: Optional[Error] = None,
-        error_message: str = "",
+            self,
+            trigger: LLMTrigger,
+            content: str = "",
+            success: bool = True,
+            error: Optional[Error] = None,
+            error_message: str = "",
     ):
         super().__init__(trigger=trigger, content=content, success=success, error=error, error_message=error_message)
         self.input_token_usage = 0
@@ -73,8 +73,8 @@ class LLMResult(BaseResult):
     @property
     def cost(self) -> float:
         return (
-            self.input_token_usage / 1000 * MODEL_INFO[self.trigger.model_name]["unit_price_input"]
-            + self.output_token_usage / 1000 * MODEL_INFO[self.trigger.model_name]["unit_price_output"]
+                self.input_token_usage / 1000 * MODEL_INFO[self.trigger.model_name]["unit_price_input"]
+                + self.output_token_usage / 1000 * MODEL_INFO[self.trigger.model_name]["unit_price_output"]
         )
 
     def to_dict(self):

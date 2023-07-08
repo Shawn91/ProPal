@@ -3,12 +3,11 @@ from pathlib import Path
 
 from PySide6.QtWidgets import QApplication
 
+if str(Path(__file__).parent) not in sys.path:
+    sys.path.append(str(Path(__file__).parent))
+
 from frontend.components.form_dialogs import LLMConnectionFormDialog
 from setting.setting_reader import setting
-
-if str(Path(__file__).parent.parent.resolve()) not in sys.path:
-    sys.path.append(str(Path(__file__).parent.parent.resolve()))
-
 from frontend.hotkey_manager import HotkeyManager
 from frontend.windows.command_window import CommandWindow
 

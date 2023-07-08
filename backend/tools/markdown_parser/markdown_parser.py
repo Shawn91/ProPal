@@ -82,7 +82,7 @@ class MarkdownParser:
             if m:
                 code = m.group("code")
                 code_blocks.append(code)
-                markdown_text = markdown_text[m.end() :]
+                markdown_text = markdown_text[m.end():]
             else:
                 break
         return code_blocks

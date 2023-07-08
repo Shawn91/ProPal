@@ -20,12 +20,12 @@ class RetrieverTrigger(BaseTrigger):
 
 class RetrieverResult(BaseResult):
     def __init__(
-        self,
-        trigger: Optional[RetrieverTrigger] = None,
-        content: List[Match] = None,
-        success: bool = True,
-        error=None,
-        error_message: str = "",
+            self,
+            trigger: Optional[RetrieverTrigger] = None,
+            content: List[Match] = None,
+            success: bool = True,
+            error=None,
+            error_message: str = "",
     ):
         super().__init__(trigger=trigger, content=content, success=success, error=error, error_message=error_message)
 

@@ -24,6 +24,10 @@ url = "https://mirrors.aliyun.com/pypi/simple/"
 default = true
 
 
+
+[tool.poetry.group.dev.dependencies]
+pyinstaller = "^5.13.0"
+
 [tool.black]
 line-length = 120
 

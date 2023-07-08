@@ -8,7 +8,7 @@ from PySide6.QtGui import QFont
 class Setting:
     def __init__(self):
         self.root_path = Path(__file__).parent.parent
-        self.user_setting_path = self.root_path / "data/user_setting.json"
+        self.user_setting_path = self.root_path / "user_data/user_setting.json"
         self.default_path = self.root_path / "setting/default.json"
         self.initialize()
         with open(self.default_path, "r", encoding="utf-8") as f:
