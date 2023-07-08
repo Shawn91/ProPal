@@ -2,9 +2,8 @@ import string
 
 from PySide6.QtCore import Qt, QSize, Signal
 from PySide6.QtGui import QClipboard
-from PySide6.QtWidgets import QListWidgetItem, QVBoxLayout, QFrame
+from PySide6.QtWidgets import QListWidgetItem, QVBoxLayout, QFrame, QDialog
 from qfluentwidgets import ListWidget
-from qframelesswindow import FramelessDialog
 
 from backend.agents.llm_agent import LLMAgent
 from backend.tools.markdown_parser import MarkdownParser
@@ -14,7 +13,12 @@ from frontend.components.short_text_viewer import ShortTextViewer
 from setting.setting_reader import setting
 
 
-class LLMResponseDialog(FramelessDialog):
+# from qframelesswindow import FramelessDialog
+
+# this dialog is preferably displayed as frameless using FramelessDialog.
+# but it does not work properly (at least on window 11) as a child of FramelessDialog for reasons unknown.
+# once it opens and closes, the target widget becomes unresponsive.
+class LLMResponseDialog(QDialog):
     OPEN_BROWSER_SIGNAL = Signal()
 
     class CopyCommands(str, OrderedEnum):
@@ -31,11 +35,10 @@ class LLMResponseDialog(FramelessDialog):
         """
         this widget should be displayed alongside the target_widget
         :param relative_position: "left" or "right" to the target_widget
-        :param initial_menu: when the dialog is shown, which menu should be shown first
         """
         super().__init__(parent=parent)
         # hide close button; max and min buttons are already hidden by FramelessDialog
-        self.titleBar.closeBtn.hide()
+        # self.titleBar.closeBtn.hide()
         self.list_widget = ListWidget()
         self.user_input = user_input
         self.target_widget = target_widget
@@ -83,26 +86,27 @@ class LLMResponseDialog(FramelessDialog):
 
     def handle_command_activated(self, item):
         clipboard = QClipboard()
-        if self.CopyCommands.has_value(item.text()):
-            if item.text() == self.CopyCommands.COPY_RESPONSE:
+        item_text = item.text()[3:]  # remove the index and dot and space
+        if self.CopyCommands.has_value(item_text):
+            if item_text == self.CopyCommands.COPY_RESPONSE:
                 clipboard.setText(self.target_widget.raw_text)
-            elif item.text() == self.CopyCommands.COPY_CODE_BLOCKS:
+            elif item_text == self.CopyCommands.COPY_CODE_BLOCKS:
                 code_blocks = MarkdownParser.extract_code_blocks(self.target_widget.raw_text)
                 clipboard.setText("\n\n".join(code_blocks))
-            elif item.text() == self.CopyCommands.COPY_TABLES_AS_CSV:
+            elif item_text == self.CopyCommands.COPY_TABLES_AS_CSV:
                 tables = MarkdownParser.extract_tables(self.target_widget.raw_text, output_format="csv")
                 clipboard.setText("\n\n".join(tables))
-            elif item.text() == self.CopyCommands.COPY_TABLES_AS_MARKDOWN:
+            elif item_text == self.CopyCommands.COPY_TABLES_AS_MARKDOWN:
                 tables = MarkdownParser.extract_tables(self.target_widget.raw_text, output_format="markdown")
                 clipboard.setText("\n\n".join(tables))
-        elif self.SearchCommands.has_value(item.text()):
-            if item.text() == self.SearchCommands.SEARCH_RAW_USER_INPUT:
+        elif self.SearchCommands.has_value(item_text):
+            if item_text == self.SearchCommands.SEARCH_RAW_USER_INPUT:
                 native_browser_manager.search(self.target_widget.raw_text)
-            elif item.text() == self.SearchCommands.SEARCH_REVISED_USER_INPUT:
+            elif item_text == self.SearchCommands.SEARCH_REVISED_USER_INPUT:
                 llm_agent = LLMAgent()
                 result = llm_agent.act(
                     trigger_attrs={"stream": False, "user_input": self.user_input, "prompt_name": "REVISE_FOR_SEARCH"}
                 )
                 native_browser_manager.search(result.content)
             self.OPEN_BROWSER_SIGNAL.emit()
-        self.close()
+        self.reject()

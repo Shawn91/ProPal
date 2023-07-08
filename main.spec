@@ -57,7 +57,6 @@ def clean_up_dist():
     for file in Path('dist/main').iterdir():
         if file.is_dir():
             continue
-        print(file.name)
         if file.name in ['ProPal.exe', 'base_library.zip', 'python3.dll', 'python310.dll']:
             continue
         file.rename(Path('dist/main/libs') / file.name)
