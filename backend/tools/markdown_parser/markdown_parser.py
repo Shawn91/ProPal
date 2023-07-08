@@ -10,6 +10,7 @@ Remember to delete `pre { line-height: 125%; }` in the generated css file becaus
 """
 import csv
 from io import StringIO
+from pathlib import Path
 from typing import List
 
 import markdown
@@ -18,6 +19,13 @@ from markdown.extensions.fenced_code import FencedCodeExtension, FencedBlockPrep
 from markdown.extensions.tables import TableExtension
 
 from setting.setting_reader import setting
+
+
+def _load_style() -> Path:
+    path_in_dev = setting.root_path / "backend/tools/markdown_parser/style.css"
+    if path_in_dev.exists():
+        return path_in_dev
+    return setting.root_path / "setting/style.css"  # in bundle
 
 
 class MarkdownParser:
@@ -30,7 +38,7 @@ class MarkdownParser:
 
     @staticmethod
     def _load_style(custom_style: str = ""):
-        with open(setting.root_path / "backend/tools/markdown_parser/style.css", "r", encoding="utf-8") as f:
+        with open(_load_style(), "r", encoding="utf-8") as f:
             code_style = "".join([line for line in f.readlines() if not line.startswith("pre {")])
             code_style += """
                 .codehilite {
