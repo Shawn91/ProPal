@@ -136,6 +136,9 @@ class CommandWindow(FramelessWindow):
         self.result_list.reset_widget()
 
     def setup_ui(self):
+        self.titleBar.closeBtn.hide()
+        self.titleBar.minBtn.hide()
+        self.titleBar.maxBtn.hide()
         # set up the ui of whole window
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setWindowFlags(self.windowFlags() | Qt.Tool | Qt.WindowStaysOnTopHint)
