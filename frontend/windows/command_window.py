@@ -209,6 +209,9 @@ class CommandWindow(FramelessWindow):
                     # stop the llm if it is running
                     self.llm_thread.stop_flag = True
                     self._switch_mode(to=Mode.TALK)
+            # the user is reading the response from llm, switch focus to text edit when user presses esc
+            elif self.mode == Mode.SEARCH and isinstance(self.result_container.widget(), ShortTextViewer):
+                self._move_focus(from_widget=self.result_container.widget(), to_widget=self.text_edit)
 
     def _move_focus(self, from_widget: QWidget, to_widget: QWidget):
         """move focus to the given widget"""
