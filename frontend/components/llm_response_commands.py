@@ -2,7 +2,7 @@ import string
 
 from PySide6.QtCore import Qt, QSize, Signal
 from PySide6.QtGui import QClipboard
-from PySide6.QtWidgets import QListWidgetItem, QVBoxLayout, QFrame, QDialog
+from PySide6.QtWidgets import QListWidgetItem, QVBoxLayout, QFrame, QDialog, QWidget
 from qfluentwidgets import ListWidget
 
 from backend.agents.llm_agent import LLMAgent
@@ -31,17 +31,19 @@ class LLMResponseDialog(QDialog):
         SEARCH_RAW_USER_INPUT = "Search Raw Query"
         SEARCH_REVISED_USER_INPUT = "Search Revised Query"
 
-    def __init__(self, target_widget: ShortTextViewer, user_input: str, relative_position="left", parent=None):
+    def __init__(self, pos_widget: QWidget, content_widget: ShortTextViewer, user_input: str, relative_position="left",
+                 parent=None):
         """
-        this widget should be displayed alongside the target_widget
-        :param relative_position: "left" or "right" to the target_widget
+        this widget should be displayed alongside the pos_widget
+        :param relative_position: "left" or "right" to the pos_widget
         """
         super().__init__(parent=parent)
         # hide close button; max and min buttons are already hidden by FramelessDialog
         # self.titleBar.closeBtn.hide()
         self.list_widget = ListWidget()
         self.user_input = user_input
-        self.target_widget = target_widget
+        self.pos_widget = pos_widget
+        self.content_widget = content_widget
         self.relative_position = relative_position
         self.list_widget.itemActivated.connect(self.handle_command_activated)
         self.setup_ui()
@@ -75,12 +77,12 @@ class LLMResponseDialog(QDialog):
         )
 
         # move self to the intended position
-        # get position of the target_widget
-        target_widget_pos = self.target_widget.mapToGlobal(self.target_widget.pos())
+        # get position of the pos_widget
+        target_widget_pos = self.pos_widget.mapToGlobal(self.pos_widget.pos())
         if self.relative_position == "left":
             self.move(target_widget_pos.x() - self.width() - 10, target_widget_pos.y())
         elif self.relative_position == "right":
-            self.move(target_widget_pos.x() + self.target_widget.width() + 10, target_widget_pos.y())
+            self.move(target_widget_pos.x() + self.pos_widget.width() + 10, target_widget_pos.y())
         else:
             raise ValueError(f"relative_position must be either 'left' or 'right', not {self.relative_position}")
 
@@ -89,19 +91,19 @@ class LLMResponseDialog(QDialog):
         item_text = item.text()[3:]  # remove the index and dot and space
         if self.CopyCommands.has_value(item_text):
             if item_text == self.CopyCommands.COPY_RESPONSE:
-                clipboard.setText(self.target_widget.raw_text)
+                clipboard.setText(self.content_widget.raw_text)
             elif item_text == self.CopyCommands.COPY_CODE_BLOCKS:
-                code_blocks = MarkdownParser.extract_code_blocks(self.target_widget.raw_text)
+                code_blocks = MarkdownParser.extract_code_blocks(self.content_widget.raw_text)
                 clipboard.setText("\n\n".join(code_blocks))
             elif item_text == self.CopyCommands.COPY_TABLES_AS_CSV:
-                tables = MarkdownParser.extract_tables(self.target_widget.raw_text, output_format="csv")
+                tables = MarkdownParser.extract_tables(self.content_widget.raw_text, output_format="csv")
                 clipboard.setText("\n\n".join(tables))
             elif item_text == self.CopyCommands.COPY_TABLES_AS_MARKDOWN:
-                tables = MarkdownParser.extract_tables(self.target_widget.raw_text, output_format="markdown")
+                tables = MarkdownParser.extract_tables(self.content_widget.raw_text, output_format="markdown")
                 clipboard.setText("\n\n".join(tables))
         elif self.SearchCommands.has_value(item_text):
             if item_text == self.SearchCommands.SEARCH_RAW_USER_INPUT:
-                native_browser_manager.search(self.target_widget.raw_text)
+                native_browser_manager.search(self.content_widget.raw_text)
             elif item_text == self.SearchCommands.SEARCH_REVISED_USER_INPUT:
                 llm_agent = LLMAgent()
                 result = llm_agent.act(
