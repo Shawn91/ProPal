@@ -10,6 +10,7 @@ from backend.agents.llm_agent import LLMAgent, LLMResult
 from backend.agents.retriever_agent import RetrieverAgent
 from backend.models import Match
 from backend.tools.database import Prompt
+from backend.tools.utils import logger
 from frontend.commands import Command
 from frontend.components.command_result_list import CommandResultList
 # from frontend.windows.base import FramelessWindow
@@ -55,6 +56,9 @@ class LLMRequestThread(QThread):
             except StopIteration:
                 self.reset()
                 break
+            except Exception as e:
+                logger.error(f"error when receiving response from llm agent: {e}")
+                raise e
 
     def reset(self):
         """restore the thread to initial state"""
@@ -289,6 +293,12 @@ class CommandWindow(FramelessWindow):
             self.result_container.repaint()
             self.adjustSize()
         elif isinstance(response, LLMResult):
+            if not response.success:
+                self.text_viewer.set_text(response.error_message)
+                self.result_container.setFixedSize(
+                    self.WIDTH, min(self.text_viewer.sizeHint().height(), self.result_container_maximum_height)
+                )
+                self.result_container.repaint()
             # ai response ended
             self._switch_mode(to=Mode.SEARCH)
         else:

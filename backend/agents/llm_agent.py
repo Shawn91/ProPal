@@ -2,9 +2,11 @@ from enum import Enum
 from typing import Dict, Optional, Tuple, Iterator
 
 import tiktoken
+from PySide6.QtCore import QTranslator
 
 from backend.agents.base_agent import BaseAgent, BaseTrigger, BaseResult
 from backend.models import Error
+from backend.tools.utils import logger
 from setting.setting_reader import setting
 
 
@@ -93,9 +95,6 @@ class LLMResult(BaseResult):
 class LLMAgent(BaseAgent):
     import openai
 
-    openai.api_key = setting.get("OPENAI_API_KEY")
-    openai.proxy = setting.get("PROXY")
-
     TRIGGER_CLASS = LLMTrigger
     RESULT_CLASS = LLMResult
 
@@ -110,6 +109,8 @@ class LLMAgent(BaseAgent):
         return trigger, self.RESULT_CLASS(trigger=trigger)
 
     def do(self, trigger: LLMTrigger, result: LLMResult):
+        self.openai.api_key = setting.get("OPENAI_API_KEY")
+        self.openai.proxy = setting.get("PROXY")
         if trigger.stream:
             return self.stream_chat(trigger=trigger, result=result)
         else:
@@ -119,57 +120,67 @@ class LLMAgent(BaseAgent):
         token_encoding = tiktoken.encoding_for_model(trigger.model_name)
         complete_message = ""
         collected_message = ""
-        res = self.openai.ChatCompletion.create(
-            model=trigger.model_name,
-            messages=trigger.history + [{"role": "user", "content": trigger.content}],
-            temperature=trigger.temperature,
-            stream=trigger.stream,
-        )
-        for chunk in res:
-            collected_message += chunk["choices"][0]["delta"].get("content", "")  # extract the message
-            if len(token_encoding.encode(collected_message)) >= cutoff_value:
+        try:
+            res = self.openai.ChatCompletion.create(
+                model=trigger.model_name,
+                messages=trigger.history + [{"role": "user", "content": trigger.content}],
+                temperature=trigger.temperature,
+                stream=trigger.stream,
+            )
+            for chunk in res:
+                collected_message += chunk["choices"][0]["delta"].get("content", "")  # extract the message
+                if len(token_encoding.encode(collected_message)) >= cutoff_value:
+                    complete_message += collected_message
+                    collected_message = ""
+                    value = yield complete_message
+                    if value == "STOP":
+                        res.close()
+                        break
+            if collected_message:
                 complete_message += collected_message
-                collected_message = ""
-                value = yield complete_message
-                if value == "STOP":
-                    res.close()
-                    break
-        if collected_message:
-            complete_message += collected_message
-            yield complete_message
-        input_token_usage, output_token_usage = self._calculate_token_usages(
-            encoding=token_encoding,
-            model_name=trigger.model_name,
-            history_messages=trigger.history + [{"role": "user", "content": trigger.content}],
-            reply_message=complete_message,
-        )
-        result.set(
-            content=complete_message,
-            input_token_usage=input_token_usage,
-            output_token_usage=output_token_usage,
-        )
+                yield complete_message
+            input_token_usage, output_token_usage = self._calculate_token_usages(
+                encoding=token_encoding,
+                model_name=trigger.model_name,
+                history_messages=trigger.history + [{"role": "user", "content": trigger.content}],
+                reply_message=complete_message,
+            )
+            result.set(
+                content=complete_message,
+                input_token_usage=input_token_usage,
+                output_token_usage=output_token_usage,
+            )
+            logger.debug(f"Stream chat completed with message: {complete_message}")
+        except Exception as e:
+            result.set(success=False, error=Error.API_CONNECTION,
+                       error_message=QTranslator.tr("Connection to API failed."))
+            logger.error(f"Connection to API failed: {e}")
         yield result
 
     def chat(self, trigger: LLMTrigger, result: LLMResult):
         token_encoding = tiktoken.encoding_for_model(trigger.model_name)
-        res = self.openai.ChatCompletion.create(
-            model=trigger.model_name,
-            messages=trigger.history + [{"role": "user", "content": trigger.content}],
-            temperature=trigger.temperature,
-            stream=trigger.stream,
-        )
-        message = res["choices"][0].message.content
-        input_token_usage, output_token_usage = self._calculate_token_usages(
-            encoding=token_encoding,
-            model_name=trigger.model_name,
-            history_messages=trigger.history + [{"role": "user", "content": trigger.content}],
-            reply_message=message,
-        )
-        result.set(
-            content=message,
-            input_token_usage=input_token_usage,
-            output_token_usage=output_token_usage,
-        )
+        try:
+            res = self.openai.ChatCompletion.create(
+                model=trigger.model_name,
+                messages=trigger.history + [{"role": "user", "content": trigger.content}],
+                temperature=trigger.temperature,
+                stream=trigger.stream,
+            )
+            message = res["choices"][0].message.content
+            input_token_usage, output_token_usage = self._calculate_token_usages(
+                encoding=token_encoding,
+                model_name=trigger.model_name,
+                history_messages=trigger.history + [{"role": "user", "content": trigger.content}],
+                reply_message=message,
+            )
+            result.set(
+                content=message,
+                input_token_usage=input_token_usage,
+                output_token_usage=output_token_usage,
+            )
+        except Exception as e:
+            result.set(success=False, error=Error.API_CONNECTION,
+                       error_message=QTranslator.tr("Connection to API failed."))
         return result
 
     @staticmethod
