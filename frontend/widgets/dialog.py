@@ -12,13 +12,14 @@ class FormDialog(QDialog):
     when its parent widget is set to transparent
     """
 
-    def __init__(self, title: str, size: Optional[Tuple[int, int]] = None, parent=None):
+    def __init__(self, title: str, size: Optional[Tuple[int, int]] = None, accept_text=QTranslator.tr("Confirm"),
+                 reject_text=QTranslator.tr("Cancel"), parent=None):
         super().__init__(parent=parent)
         self.central_layout = QVBoxLayout()
         self.title = title
         self.layout = QVBoxLayout()
-        self.confirm_button = PrimaryPushButton(QTranslator.tr("Confirm"))
-        self.cancel_button = PushButton(QTranslator.tr("Cancel"))
+        self.confirm_button = PrimaryPushButton(accept_text)
+        self.cancel_button = PushButton(reject_text)
         self.button_box = QDialogButtonBox()
         self.button_box.addButton(self.confirm_button, QDialogButtonBox.AcceptRole)
         self.button_box.addButton(self.cancel_button, QDialogButtonBox.RejectRole)

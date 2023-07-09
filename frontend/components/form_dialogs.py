@@ -1,5 +1,7 @@
+import webbrowser
+
 from PySide6.QtCore import QTranslator, Signal
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QGroupBox, QFormLayout
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QGroupBox, QFormLayout, QLabel
 from qfluentwidgets import PlainTextEdit, LineEdit
 
 from backend.tools.database import Prompt
@@ -149,6 +151,24 @@ class StringTemplateFillingDialog(FormDialog):
         if self.validate_form():
             self.TEMPLATE_FILLED_SIGNAL.emit(self.fill_template())
             super().accept()
+
+
+class NewVersionAvailableDialog(FormDialog):
+    def __init__(self, parent=None):
+        super().__init__(title=QTranslator.tr("New version available"),
+                         accept_text=QTranslator.tr("Get New Version"),
+                         reject_text=QTranslator.tr("Later"),
+                         parent=parent)
+
+    def setup_central_layout(self):
+        self.setFont(setting.default_font)
+        message_label = QLabel()
+        message_label.setText(QTranslator.tr("A new version of ProPal is available!", type(self).__name__))
+        self.central_layout.addWidget(message_label)
+
+    def accept(self) -> None:
+        webbrowser.open("https://github.com/Shawn91/ProPal/releases")
+        super().accept()
 
 
 if __name__ == "__main__":
