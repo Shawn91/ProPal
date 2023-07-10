@@ -110,7 +110,7 @@ This plugin system will:
 
 The following screen-grabbed picture shows what ProPal looks like with its main features.
 
-![](file://D:\projects\ProPal\docs\pics\input_with_all_features.png?msec=1689001981019)
+![](docs\pics\input_with_all_features.png)
 
 ProPal has a global hotkey `Alt+X` to show/hide it.
 
@@ -137,11 +137,11 @@ Press the starting letter to select the corresponding action and press `Enter` t
 
 Type in initials or any consecutive letters of `add new prompt` and press `Enter` to add a new prompt.
 
-![](file://D:\projects\ProPal\docs\pics\search_for_new_prompt_setting.png?msec=1689001981003)
+![](docs\pics\search_for_new_prompt_setting.png)
 
 You can add tags and variables to your prompt. Variables must be surrounded by `${` and `}`.
 
-![](file://D:\projects\ProPal\docs\pics\add_new_prompt.png?msec=1689001981013)
+![](docs\pics\add_new_prompt.png)
 
 Press `Ctrl+Enter` to save your prompt.
 
@@ -151,12 +151,12 @@ Press `Ctrl+Enter` to save your prompt.
 
 Type in words of a prompt to search for it.
 
-![](file://D:\projects\ProPal\docs\pics\search_for_prompt.png?msec=1689001981002)
+![](docs\pics\search_for_prompt.png)
 
 Press `Enter` and the prompt, if containing no variables, will be injected into the input box. If it contains variables,
 a dialog window will pop up for you to fill in the variables first.
 
-![](file://D:\projects\ProPal\docs\pics\fill_prompt_variable.png?msec=1689001981002)
+![](docs\pics\fill_prompt_variable.png)
 
 <!-- TOC --><a name="55-transfer-data-to-another-computer"></a>
 
