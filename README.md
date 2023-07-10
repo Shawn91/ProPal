@@ -39,30 +39,21 @@ less user-friendly than they could have been.
 
 Here are some features that I would like to see in a better interface:
 
-1. ability to use my own API key
-2. full of intuitive keyboard shortcuts
-
-- I like VIM, and moving my hand from the keyboard to the mouse is annoying
-
-3. easy prompt injection and management
-
-- preferably templates with variables to be filled in at the time of use
-
-4. automatic chat history management
-
-- especially auto-deletion of old chats
-
-5. ability to sync data across devices
-6. ability to search through chat history and prompts
-7. preferably no Electron
-
-- I'm OK with Electron in general
-- but for an app that will likely to be constantly running in the background, I do want it to be memory efficient
-- I use PySide6 for ProPal
-
-8. preferably portable
-
-- I particully hate those that can only be installed in your`C:` drive
+* ability to use my own API key
+* full of intuitive keyboard shortcuts
+  * I like VIM, and moving my hand from the keyboard to the mouse is annoying
+* easy prompt injection and management
+  * preferably templates with variables to be filled in at the time of use
+* automatic chat history management
+  * especially auto-deletion of old chats
+* ability to sync data across devices
+* ability to search through chat history and prompts
+* preferably no Electron
+  * I'm OK with Electron in general
+  * but for an app that will likely to be constantly running in the background, I do want it to be memory efficient
+  * I use PySide6 for ProPal
+* preferably portable
+  * I particully hate those that can only be installed in your`C:` drive
 
 It would be a great chat interface for LLMs if it can meet all the above requirements. But, it is still not enough for a
 productivity booster.
