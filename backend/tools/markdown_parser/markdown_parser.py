@@ -49,11 +49,15 @@ class MarkdownParser:
             table_style = """
             table {
                 border-collapse: collapse;
+                table-layout: fixed;
+                width:100%;
             }
             table td {
                 padding: 15px;
                 color: #636363;
                 border: 1px solid #dddfe1;
+                word-wrap:break-word;
+                white-space: normal;
             }
             table thead th {
                 padding: 15px;
@@ -61,6 +65,11 @@ class MarkdownParser:
                 color: #ffffff;
                 font-weight: bold;
                 border: 1px solid #54585d;
+                word-wrap:break-word;
+                white-space: normal;
+            }
+            pre {
+                white-space: pre-wrap;
             }
             """
         style = code_style + table_style + custom_style

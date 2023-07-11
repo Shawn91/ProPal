@@ -27,7 +27,8 @@ class ShortTextViewer(QLabel):
         self.setup_ui()
 
         self._text_format = ""
-        self._text = ""  # not to be confused with self.text(). This is the original text. self.text() is the shown text
+        # not to be confused with self.text(). This is the original text. self.text() is the shown text
+        self._text = text
         self._html = text if text_format == "html" else ""
         if self._text:
             self.set_text(text=text, text_format=text_format)
