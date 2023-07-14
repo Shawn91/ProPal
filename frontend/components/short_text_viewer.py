@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QKeyEvent
 from PySide6.QtWidgets import QLabel
 
@@ -16,6 +16,7 @@ class ShortTextViewer(QLabel):
         custom_style=f'div, p, table {{font-size: {setting.get("FONT_SIZE") + 4}px; '
                      f'font-family: {setting.get("FONT_FAMILY")}}};'
     )
+    PADDING = 10
 
     def __init__(self, text: str = "", text_format="markdown", parent=None):
         """
@@ -47,9 +48,9 @@ class ShortTextViewer(QLabel):
         self.setCursor(Qt.IBeamCursor)
         self.setWordWrap(True)
         self.setStyleSheet(
-            """
+            f"""
                 background-color: white;
-                padding: 10px;
+                padding: {self.PADDING}px;
             """
         )
 
@@ -76,3 +77,6 @@ class ShortTextViewer(QLabel):
                 self.parent().keyPressEvent(event)
                 return
         super().keyPressEvent(event)
+
+    def sizeHint(self):
+        return QSize(super().sizeHint().width(), super().sizeHint().height() + self.PADDING * 2)
