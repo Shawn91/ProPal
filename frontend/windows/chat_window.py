@@ -1,3 +1,5 @@
+import re
+
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QHBoxLayout, QWidget, QSizePolicy, QListWidget, QVBoxLayout
 from qfluentwidgets import ScrollArea
@@ -62,8 +64,9 @@ class ChatWindow(QWidget):
         self.llm_thread.content_received.connect(self.update_ai_response)
         self.llm_thread.result_received.connect(self.update_ai_response)
 
-    def send_message(self, message):
-        message_widget = self.chat_history_widget.add_message(message, avatar_position='right')
+    def send_message(self, message: str):
+        self.chat_history_widget.add_message(self._convert_single_to_double_line_breaks(message),
+                                             avatar_position='right')
         response_widget = self.chat_history_widget.add_message('...', avatar_position='left')
         self.conversations_latest_message_widgets[self.active_conversation_id] = response_widget
         self.llm_thread.user_input = message
@@ -82,3 +85,11 @@ class ChatWindow(QWidget):
             self.conversations_latest_message_widgets.pop(self.active_conversation_id)
         else:
             raise ValueError(f"Unknown type of chunk: {type(response)}")
+
+    @staticmethod
+    def _convert_single_to_double_line_breaks(text):
+        """
+        convert single line breaks to double line breaks for proper display of markdown
+        """
+        double_line_text = re.sub(r'(?<!\n)\n(?!\n)', r'\n\n', text)
+        return double_line_text

@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt, QSize
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QKeyEvent
 from PySide6.QtWidgets import QLabel
 
@@ -77,6 +77,3 @@ class ShortTextViewer(QLabel):
                 self.parent().keyPressEvent(event)
                 return
         super().keyPressEvent(event)
-
-    def sizeHint(self):
-        return QSize(super().sizeHint().width(), super().sizeHint().height() + self.PADDING * 2)

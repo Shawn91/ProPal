@@ -38,13 +38,7 @@ class MessageWidget(QWidget):
                 layout.addSpacerItem(widget)
             else:
                 layout.addWidget(widget)
-
-        self.setFixedHeight(max(self.avatar.sizeHint().height(), self.content_widget.sizeHint().height()))
         self.setLayout(layout)
-
-    # def sizeHint(self):
-    #     return QSize(super().sizeHint().width(),
-    #                  max(self.avatar.sizeHint().height(), self.content_widget.sizeHint().height()))
 
     def set_message_content(self, content):
         self.content_widget.set_text(content)
