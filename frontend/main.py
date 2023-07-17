@@ -3,6 +3,7 @@ from pathlib import Path
 
 from PySide6.QtWidgets import QApplication
 
+from frontend.windows.chat_window import ChatWindow
 from setting.setting_reader import setting
 
 if str(Path(__file__).parent) not in sys.path:
@@ -11,7 +12,6 @@ if str(Path(__file__).parent) not in sys.path:
 from frontend.utils import NewVersionChecker
 from frontend.components.form_dialogs import NewVersionAvailableDialog, LLMConnectionFormDialog
 from frontend.hotkey_manager import HotkeyManager
-from frontend.windows.command_window import CommandWindow
 
 new_version_checker = NewVersionChecker()
 
@@ -20,9 +20,12 @@ class MyApp(QApplication):
     def __init__(self, argv):
         super().__init__(argv)
         self.hotkey_manager = HotkeyManager()
-        self.search_window: CommandWindow = CommandWindow()
+        # self.search_window: CommandWindow = CommandWindow()
+        self.chat_window = ChatWindow()
         self.initial_checks()
-        self.search_window.show()
+        # self.search_window.show()
+        self.chat_window.show()
+        # self.chat_window.chat_text_edit.setFocus()
 
     @staticmethod
     def initial_checks():

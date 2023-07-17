@@ -39,8 +39,16 @@ class MessageWidget(QWidget):
             else:
                 layout.addWidget(widget)
 
-        self.setLayout(layout)
         self.setFixedHeight(max(self.avatar.sizeHint().height(), self.content_widget.sizeHint().height()))
+        self.setLayout(layout)
+
+    # def sizeHint(self):
+    #     return QSize(super().sizeHint().width(),
+    #                  max(self.avatar.sizeHint().height(), self.content_widget.sizeHint().height()))
+
+    def set_message_content(self, content):
+        self.content_widget.set_text(content)
+        # self.adjustSize()
 
 
 class ChatHistoryWidget(QWidget):
@@ -56,9 +64,15 @@ class ChatHistoryWidget(QWidget):
         self.setLayout(layout)
 
     def add_message(self, message, avatar_position='right'):
-        self.layout().addWidget(MessageWidget(message=message, avatar_position=avatar_position))
+        input_widget = MessageWidget(message=message, avatar_position=avatar_position)
+        self.layout().addWidget(input_widget)
+        return input_widget
+
+    def update_content_in_message_widget(self, message_widget, content):
+        message_widget.set_message_content(content)
+        # self.adjustSize()
 
     def _test(self):
         messages = ['test']
         for message in messages:
-            self.add_message(message, avatar_position='left')
+            self.layout().addWidget(MessageWidget(message=message, avatar_position='left'))

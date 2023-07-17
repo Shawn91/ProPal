@@ -6,7 +6,7 @@ from setting.setting_reader import setting
 
 
 class ChatTextEdit(QTextEdit):
-    MESSAGE_SENT_SIGNAL = Signal(str)
+    MESSAGE_WRITTEN_SIGNAL = Signal(str)
 
     def __init__(self, initial_line_num=5, parent=None):
         super().__init__(parent=parent)
@@ -26,7 +26,7 @@ class ChatTextEdit(QTextEdit):
         self.set_height_by_line_number(line_number=self.initial_line_num)
 
     def send_message(self):
-        self.MESSAGE_SENT_SIGNAL.emit(self.toPlainText())
+        self.MESSAGE_WRITTEN_SIGNAL.emit(self.toPlainText())
         self.clear()
 
     def set_height_by_line_number(self, line_number):

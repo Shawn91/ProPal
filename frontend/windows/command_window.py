@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 
-from PySide6.QtCore import Qt, QThread, Signal
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QHideEvent, QTextCursor
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QApplication, QWidget, QVBoxLayout, QScrollArea
 from qframelesswindow import FramelessWindow
@@ -10,7 +10,6 @@ from backend.agents.llm_agent import LLMAgent, LLMResult
 from backend.agents.retriever_agent import RetrieverAgent
 from backend.models import Match
 from backend.tools.database import Prompt
-from backend.tools.utils import logger
 from frontend.commands import Command
 from frontend.components.command_result_list import CommandResultList
 # from frontend.windows.base import FramelessWindow
@@ -19,6 +18,7 @@ from frontend.components.form_dialogs import StringTemplateFillingDialog
 from frontend.components.llm_response_commands import LLMResponseDialog
 from frontend.components.short_text_viewer import ShortTextViewer
 from frontend.hotkey_manager import hotkey_manager
+from frontend.windows.base import LLMRequestThread
 from setting.setting_reader import setting
 
 
@@ -26,44 +26,6 @@ class Mode(Enum):
     SEARCH = "search"
     TALK = "talk"
     LLM_RESPONDING = "llm_responding"
-
-
-class LLMRequestThread(QThread):
-    content_received = Signal(str)
-    result_received = Signal(LLMResult)
-
-    def __init__(self, llm_agent, user_input: str = ""):
-        super().__init__()
-        self.llm_agent = llm_agent
-        self.user_input = user_input
-        self.stop_flag = False  # whether to stop the thread
-
-    def run(self):
-        response = self.llm_agent.act(trigger_attrs={"user_input": self.user_input})
-        while True:
-            if self.stop_flag:
-                llm_result = response.send("STOP")  # stop streaming response
-                self.result_received.emit(llm_result)
-                self.reset()
-                break
-
-            try:
-                chunk = next(response)
-                if isinstance(chunk, str):
-                    self.content_received.emit(chunk)
-                elif isinstance(chunk, LLMResult):
-                    self.result_received.emit(chunk)
-            except StopIteration:
-                self.reset()
-                break
-            except Exception as e:
-                logger.error(f"error when receiving response from llm agent: {e}")
-                raise e
-
-    def reset(self):
-        """restore the thread to initial state"""
-        self.stop_flag = False
-        self.user_input = ""
 
 
 class CommandWindow(FramelessWindow):
